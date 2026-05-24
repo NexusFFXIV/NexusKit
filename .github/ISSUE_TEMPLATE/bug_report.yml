@@ -1,0 +1,81 @@
+name: Bug report
+description: A NexusKit package behaves incorrectly, crashes, or breaks consumers.
+title: "[Bug]: "
+labels: ["bug", "feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. NexusKit ships seven packages — the more precise you are about which one is misbehaving, the faster we can fix it.
+
+  - type: input
+    id: affected-packages
+    attributes:
+      label: Affected package(s)
+      description: |
+        Which NexusKit package(s) are involved? One of: `Core`, `Persistence`, `Hosting`, `Ui`, `Ipc`, `GameData`, `ChatNotifications`. If unsure, list everything you think might be related — we'll narrow down.
+      placeholder: "e.g. NexusKit.Persistence, NexusKit.Hosting"
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version(s)
+      description: |
+        Open your consumer project's `*.csproj` or `Directory.Packages.props` and copy the version. If you're on a floating `[X.Y.Z,)` reference, paste what restore actually resolved (in `obj/project.assets.json` or `dotnet list package`).
+      placeholder: "e.g. 0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: consumer-context
+    attributes:
+      label: Consumer context
+      description: Where are you using NexusKit?
+      options:
+        - A Dalamud plugin I'm writing
+        - The NexusKit.Modules library (downstream of NexusKit)
+        - PlayerNexusTracker
+        - Something else (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        Steps to reproduce, expected behaviour, actual behaviour. Stack traces, exception messages, surprising state — all useful.
+      placeholder: |
+        1. Register a service with `services.AddNexusKitPersistence()`
+        2. Inject `INexusDbContextFactory` into my service constructor
+        3. Call `factory.CreateAsync(ct)` from a background task
+        4. Expected: returns a DbContext
+        5. Actual: throws ObjectDisposedException
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal-repro
+    attributes:
+      label: Minimal repro (code) (optional)
+      description: |
+        If you can extract the issue into a snippet — paste it here. Even ~20 lines that fail to compile or run wrong helps enormously.
+      render: csharp
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / stack traces (optional)
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched [existing issues](https://github.com/NexusFFXIV/NexusKit/issues?q=is%3Aissue) and didn't find a duplicate.
+          required: true
+        - label: I'm on a recent NexusKit version (or have stated the version above).
+          required: true
