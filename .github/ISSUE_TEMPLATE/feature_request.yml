@@ -1,0 +1,53 @@
+name: Feature request
+description: Suggest a new API, behaviour change, or improvement to a NexusKit package.
+title: "[Feature]: "
+labels: ["enhancement", "feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Good ideas welcome. For open-ended brainstorming use [Discussions](https://github.com/NexusFFXIV/NexusKit/discussions) — Issues are best for concrete, scoped proposals.
+
+  - type: input
+    id: target-package
+    attributes:
+      label: Target package
+      description: |
+        Which NexusKit package would this affect? `Core`, `Persistence`, `Hosting`, `Ui`, `Ipc`, `GameData`, `ChatNotifications`, or a new one?
+      placeholder: "e.g. NexusKit.Ipc"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: |
+        Describe the situation. Why is the current API insufficient?
+      placeholder: |
+        When publishing an IPC, I always need to wrap the args in a struct because the registry only takes single-payload signatures. A multi-arg variant would let me skip the struct.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed solution (optional)
+      description: |
+        Concrete API sketch, signature, or behaviour change. C# code blocks welcome.
+      render: csharp
+
+  - type: textarea
+    id: breaking
+    attributes:
+      label: Backwards-compatibility impact (optional)
+      description: |
+        Would this break existing consumers? Could it be additive (new overload, opt-in)? Note if you have an idea.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched [existing issues](https://github.com/NexusFFXIV/NexusKit/issues?q=is%3Aissue) and discussions for the same idea.
+          required: true
