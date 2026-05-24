@@ -46,6 +46,26 @@ Smoke-test before opening a PR:
 dotnet build NexusKit.sln -c Release
 ```
 
+## Cutting a testing build
+
+For changes that need real-world validation before going to all consumers (risky refactor, breaking API change, new feature), publish a **testing release** first instead of jumping straight to a stable tag:
+
+1. Land the work on `main` via the normal PR flow.
+2. From `main`, tag with a pre-release suffix:
+   ```powershell
+   git tag -a v0.2.0-rc.1 -m "v0.2.0-rc.1 — testing build for <reason>"
+   git push origin v0.2.0-rc.1
+   ```
+3. CI publishes pre-release NuGets (NuGet treats `0.2.0-rc.1` as lower priority — consumers must explicitly opt in via `--prerelease` to pick them up). The GitHub Release is automatically marked **Pre-release** because the tag contains `-`.
+4. After validation, cut the stable version (`v0.2.0`) — no separate code change, just the tag.
+
+Suffix conventions (descending stability):
+- `-rc.N` — release candidate (feature-complete, last sanity check)
+- `-beta.N` — feature-complete but UI/edge-cases pending
+- `-preview.N` — early feedback, may break
+
+The PR that prepares the change does **not** need to know whether it will ship as testing or stable — that's a tag-time decision. The same PR can be tested as `-rc.1`, then promoted to stable later with no rebase or extra commit.
+
 ## Code style
 
 See [docs/coding-conventions.md](docs/coding-conventions.md). Highlights that catch reviewers' attention:
