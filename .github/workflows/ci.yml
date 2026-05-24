@@ -16,7 +16,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0   # MinVer needs full history to compute versions
 
@@ -36,6 +36,21 @@ jobs:
       - name: Restore
         run: dotnet restore NexusKit.sln
 
+      - name: Audit NuGet dependencies for known vulnerabilities
+        shell: pwsh
+        run: |
+          $output = dotnet list NexusKit.sln package --vulnerable --include-transitive 2>&1 | Out-String
+          Write-Host $output
+          # Fail if any High/Critical CVE is reachable from our dep tree.
+          if ($output -match '\b(High|Critical)\b') {
+            Write-Host "::error::Vulnerable NuGet dependency at High or Critical severity — review the report above and update before merging."
+            exit 1
+          }
+
+      - name: List outdated NuGet dependencies (informational)
+        continue-on-error: true
+        run: dotnet list NexusKit.sln package --outdated --include-transitive
+
       - name: Build
         run: dotnet build NexusKit.sln -c Release --no-restore
 
@@ -54,14 +69,14 @@ jobs:
 
       - name: Upload artifacts
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: nupkgs
           path: ./artifacts/*.nupkg
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
           files: |
