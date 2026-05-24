@@ -64,13 +64,32 @@ git push origin v0.2.1
 
 MinVer derives the version from the tag's commit, so the hotfix tag is enough — it doesn't need to be on `main` first. Make sure the same fix gets merged into `main` separately so v0.3.0 doesn't regress.
 
-## Pre-release versions
+## Pre-release versions (testing builds)
 
-Unreleased commits on `main` build as `0.2.1-preview.0.N` where N is the commit count since `v0.2.0`. To publish a pre-release deliberately, tag with an explicit suffix:
+Unreleased commits on `main` build as `0.2.1-preview.0.N` where N is the commit count since `v0.2.0` (MinVer auto-suffix). To **publish** a pre-release deliberately, tag with an explicit suffix containing `-`:
 
 ```powershell
 git tag -a v0.2.0-rc.1 -m "v0.2.0-rc.1"
 git push origin v0.2.0-rc.1
 ```
 
-Pre-release tags follow the same workflow but produce NuGets with a `-rc.1` suffix that NuGet treats as lower-priority for normal installs.
+What CI does with a pre-release tag — different from a stable tag in exactly two ways:
+
+| Step | Stable tag (`v0.2.0`) | Pre-release tag (`v0.2.0-rc.1`) |
+|---|---|---|
+| NuGet version | `0.2.0` | `0.2.0-rc.1` (NuGet treats as lower priority — consumers must explicitly opt in via `--prerelease` or pin the version) |
+| GitHub Release flag | normal release | **Pre-release** (set automatically because the tag contains `-`) |
+| Everything else | identical | identical — same build, same packages, same release notes mechanism |
+
+Suffix conventions (descending stability):
+- `-rc.N` — release candidate (feature-complete, last sanity check)
+- `-beta.N` — feature-complete but UI/edge-cases pending
+- `-preview.N` — early feedback, may break
+
+Consumers of NexusKit (NexusKit.Modules, plugins) **stay on their floating `[X.Y.Z,)` `PackageReference`** during pre-release periods — the floating spec ignores pre-releases by default, so stable consumers continue to pull stable versions. A consumer that wants to test against the pre-release pins it explicitly:
+
+```xml
+<PackageReference Include="NexusKit.Core" Version="0.2.0-rc.1" />
+```
+
+After validation, cut the stable version (`v0.2.0`) — no separate code change needed, just the tag. Consumers on floating refs automatically pick it up.
