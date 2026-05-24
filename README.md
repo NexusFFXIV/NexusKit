@@ -3,6 +3,10 @@
 **Plugin-agnostic framework for FINAL FANTASY XIV Dalamud plugins.**
 
 [![CI](https://github.com/NexusFFXIV/NexusKit/actions/workflows/ci.yml/badge.svg)](https://github.com/NexusFFXIV/NexusKit/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/NexusFFXIV/NexusKit/actions/workflows/codeql.yml/badge.svg)](https://github.com/NexusFFXIV/NexusKit/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/NexusFFXIV/NexusKit?label=release&logo=github)](https://github.com/NexusFFXIV/NexusKit/releases)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![Dalamud API](https://img.shields.io/badge/Dalamud_API-15-9D5BFF)](https://github.com/goatcorp/Dalamud)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 ## Overview
