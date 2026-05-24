@@ -3,10 +3,9 @@ namespace NexusKit.GameData.ObjectTables;
 /// <summary>
 /// Lightweight, immutable snapshot of a player character read from the live
 /// Dalamud <c>IObjectTable</c> in a single framework-thread tick. Captures the
-/// fields a tracker / observation pipeline actually consumes — the same set the
-/// PlayerNexus / PlayerTrack <c>PlayerData</c> class exposes, minus the unsafe
+/// fields a tracker / observation pipeline actually consumes; the unsafe
 /// FFXIVClientStructs pulls that aren't worth their complexity here (Title /
-/// Ornament — add later when needed).
+/// Ornament) are deliberately omitted — add later when needed.
 /// <para>The snapshot is detached from the live object so it's safe to forward
 /// to threads other than the framework thread.</para>
 /// </summary>

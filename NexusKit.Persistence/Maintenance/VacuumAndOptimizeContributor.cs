@@ -5,9 +5,8 @@ namespace NexusKit.Persistence.Maintenance;
 
 /// <summary>
 /// Weekly heavy-housekeeping pass: <c>REINDEX</c> → <c>ANALYZE</c> →
-/// <c>PRAGMA optimize</c> → <c>VACUUM</c>. Mirrors the sequence the
-/// PlayerTrack plugin uses for its own weekly maintenance, which is the
-/// canonical SQLite "rebuild and shrink" recipe.
+/// <c>PRAGMA optimize</c> → <c>VACUUM</c>. The canonical SQLite
+/// "rebuild and shrink" recipe for long-running embedded databases.
 ///
 /// <para><b>VACUUM is the expensive step.</b> It rewrites the entire
 /// database file under an exclusive lock; on a multi-hundred-megabyte DB it
@@ -36,10 +35,9 @@ internal sealed class VacuumAndOptimizeContributor : IDbMaintenanceContributor
 
     public string Name => "vacuum-and-optimize";
 
-    /// <summary>7-day cadence — matches PlayerTrack's
-    /// <c>MaintenanceLastRunOn</c> gate. Weekly is frequent enough to keep
-    /// the file from drifting after a big deletion run, infrequent enough
-    /// that the multi-second pause is amortised.</summary>
+    /// <summary>7-day cadence. Weekly is frequent enough to keep the file
+    /// from drifting after a big deletion run, infrequent enough that the
+    /// multi-second VACUUM pause is amortised.</summary>
     public TimeSpan Interval => TimeSpan.FromDays(7);
 
     public async Task RunAsync(DbContext ctx, CancellationToken ct)
@@ -56,10 +54,10 @@ internal sealed class VacuumAndOptimizeContributor : IDbMaintenanceContributor
 
         await ExecuteAsync(connection, $"PRAGMA busy_timeout = {BusyTimeoutMs}", ct).ConfigureAwait(false);
 
-        // Order matches PlayerTrack: rebuild structure first, refresh
-        // stats, let SQLite decide which indexes to keep, then defragment
-        // the file. VACUUM benefits from the fresh ANALYZE stats which
-        // inform the page-rewrite heuristics.
+        // Order: rebuild structure first, refresh stats, let SQLite decide
+        // which indexes to keep, then defragment the file. VACUUM benefits
+        // from the fresh ANALYZE stats which inform the page-rewrite
+        // heuristics.
         await ExecuteAsync(connection, "REINDEX", ct).ConfigureAwait(false);
         await ExecuteAsync(connection, "ANALYZE", ct).ConfigureAwait(false);
         await ExecuteAsync(connection, "PRAGMA optimize", ct).ConfigureAwait(false);

@@ -9,11 +9,11 @@ namespace NexusKit.Ui.Widgets;
 /// clipper's allocation and disposal so callers can't leak it.
 /// <para>The clipper must know each row's height in advance for its layout
 /// calculation; pass <c>rowHeight</c> in unscaled pixels.</para>
-/// <para>Pattern lifted from PlayerNexus / PlayerTrack which both use the same
-/// <c>ImGuiNative.ImGuiListClipper()</c> factory — note the function symbol is just
-/// <c>ImGuiListClipper()</c>, NOT the doubled <c>ImGuiListClipper_ImGuiListClipper</c>
-/// variant other ImGui bindings expose. A default-constructed
-/// <see cref="ImGuiListClipperPtr"/> wraps a null pointer and crashes inside Begin().</para>
+/// <para>Backed by Dalamud's <c>ImGuiNative.ImGuiListClipper()</c> factory — note
+/// the function symbol is just <c>ImGuiListClipper()</c>, NOT the doubled
+/// <c>ImGuiListClipper_ImGuiListClipper</c> variant some other ImGui bindings
+/// expose. A default-constructed <see cref="ImGuiListClipperPtr"/> wraps a null
+/// pointer and crashes inside Begin().</para>
 /// </summary>
 public static unsafe class NexusListClipper
 {
