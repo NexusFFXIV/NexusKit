@@ -36,6 +36,21 @@ jobs:
       - name: Restore
         run: dotnet restore NexusKit.sln
 
+      - name: Audit NuGet dependencies for known vulnerabilities
+        shell: pwsh
+        run: |
+          $output = dotnet list NexusKit.sln package --vulnerable --include-transitive 2>&1 | Out-String
+          Write-Host $output
+          # Fail if any High/Critical CVE is reachable from our dep tree.
+          if ($output -match '\b(High|Critical)\b') {
+            Write-Host "::error::Vulnerable NuGet dependency at High or Critical severity — review the report above and update before merging."
+            exit 1
+          }
+
+      - name: List outdated NuGet dependencies (informational)
+        continue-on-error: true
+        run: dotnet list NexusKit.sln package --outdated --include-transitive
+
       - name: Build
         run: dotnet build NexusKit.sln -c Release --no-restore
 
