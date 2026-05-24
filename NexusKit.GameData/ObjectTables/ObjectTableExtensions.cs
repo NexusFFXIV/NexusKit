@@ -6,10 +6,9 @@ using NativeChar = FFXIVClientStructs.FFXIV.Client.Game.Character.Character;
 namespace NexusKit.GameData.ObjectTables;
 
 /// <summary>
-/// Cross-cutting extensions over <see cref="IObjectTable"/>. Same shape as the
-/// PlayerNexus / PlayerTrack <c>ObjectTableExtension</c> family: iterate the
-/// table once, filter to valid <see cref="IPlayerCharacter"/> entries, and hand
-/// callers an immutable snapshot they can use off the framework thread.
+/// Cross-cutting extensions over <see cref="IObjectTable"/>. Iterate the table
+/// once, filter to valid <see cref="IPlayerCharacter"/> entries, and hand callers
+/// an immutable snapshot they can use off the framework thread.
 /// <para><b>Threading:</b> every method here MUST be invoked on the framework
 /// thread. The <c>IObjectTable</c> is owned by Dalamud's game loop — reading it
 /// from another thread can race with the engine's own writes. Either subscribe
@@ -34,8 +33,8 @@ public static class ObjectTableExtensions
     /// not in game or the table is otherwise empty.</summary>
     public static IEnumerable<VisiblePlayer> GetVisiblePlayers(this IObjectTable objectTable)
     {
-        // Index 0 is reserved for the local player; the same approach is used by
-        // PlayerNexus + PlayerTrack to skip "yourself" without comparing addresses.
+        // Index 0 is reserved for the local player — skip it via offset, no
+        // address comparison needed.
         foreach (var obj in objectTable.Skip(1))
         {
             if (obj.ObjectKind != ObjectKind.Pc) continue;
