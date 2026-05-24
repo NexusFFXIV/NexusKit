@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true" />
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+
+    <!-- Relative-time keys consumed by LocalizerExtensions.FormatRelativeTime /
+         FormatRelativeTimeAgo / FormatTimeSpan. Live here (NexusKit.Core)
+         because the consuming code does too — keeping the keys next to their
+         only call site avoids cross-project owners-vs-users drift. -->
+    <data name="nexuskit.time.just_now"><value>just now</value></data>
+    <data name="nexuskit.time.seconds_short"><value>{0}s</value></data>
+    <data name="nexuskit.time.minutes_short"><value>{0}m</value></data>
+    <data name="nexuskit.time.hours_short"><value>{0}h</value></data>
+    <data name="nexuskit.time.days_short"><value>{0}d</value></data>
+    <data name="nexuskit.time.weeks_short"><value>{0}w</value></data>
+    <data name="nexuskit.time.months_short"><value>{0}mo</value></data>
+    <data name="nexuskit.time.years_short"><value>{0}y</value></data>
+    <data name="nexuskit.time.ago_pattern"><value>{0} ago</value></data>
+    <data name="nexuskit.time.in_pattern"><value>in {0}</value></data>
+</root>

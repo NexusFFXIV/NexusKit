@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true" />
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+
+    <data name="nexuskit.chatnotifications.nav"><value>Notifications</value></data>
+    <data name="nexuskit.chatnotifications.empty"><value>No notification kinds have been registered yet.</value></data>
+    <data name="nexuskit.chatnotifications.enabled"><value>Enabled</value></data>
+    <data name="nexuskit.chatnotifications.channel"><value>Channel</value></data>
+    <data name="nexuskit.chatnotifications.color"><value>Color</value></data>
+    <data name="nexuskit.chatnotifications.group.default"><value>Other</value></data>
+    <data name="nexuskit.chatnotifications.suppressed_by"><value>Disabled while "{0}" is on — it already covers this event.</value></data>
+
+    <data name="nexuskit.chatnotifications.channel.echo"><value>Echo</value></data>
+    <data name="nexuskit.chatnotifications.channel.notice"><value>Notice</value></data>
+    <data name="nexuskit.chatnotifications.channel.systemmessage"><value>System</value></data>
+    <data name="nexuskit.chatnotifications.channel.debug"><value>Debug</value></data>
+    <data name="nexuskit.chatnotifications.channel.none"><value>(silent)</value></data>
+    <data name="nexuskit.chatnotifications.channel.urgent"><value>Urgent</value></data>
+    <data name="nexuskit.chatnotifications.channel.say"><value>Say</value></data>
+    <data name="nexuskit.chatnotifications.channel.shout"><value>Shout</value></data>
+    <data name="nexuskit.chatnotifications.channel.tellincoming"><value>Tell</value></data>
+    <data name="nexuskit.chatnotifications.channel.party"><value>Party</value></data>
+    <data name="nexuskit.chatnotifications.channel.alliance"><value>Alliance</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls1"><value>Linkshell 1</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls2"><value>Linkshell 2</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls3"><value>Linkshell 3</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls4"><value>Linkshell 4</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls5"><value>Linkshell 5</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls6"><value>Linkshell 6</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls7"><value>Linkshell 7</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls8"><value>Linkshell 8</value></data>
+    <data name="nexuskit.chatnotifications.channel.freecompany"><value>Free Company</value></data>
+    <data name="nexuskit.chatnotifications.channel.novicenetwork"><value>Novice Network</value></data>
+    <data name="nexuskit.chatnotifications.channel.customemote"><value>Custom Emotes</value></data>
+    <data name="nexuskit.chatnotifications.channel.standardemote"><value>Standard Emotes</value></data>
+    <data name="nexuskit.chatnotifications.channel.yell"><value>Yell</value></data>
+    <data name="nexuskit.chatnotifications.channel.crossparty"><value>Party (cross-world)</value></data>
+    <data name="nexuskit.chatnotifications.channel.pvpteam"><value>PvP Team</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell1"><value>Crossworld Linkshell 1</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell2"><value>Crossworld Linkshell 2</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell3"><value>Crossworld Linkshell 3</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell4"><value>Crossworld Linkshell 4</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell5"><value>Crossworld Linkshell 5</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell6"><value>Crossworld Linkshell 6</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell7"><value>Crossworld Linkshell 7</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell8"><value>Crossworld Linkshell 8</value></data>
+
+    <data name="nexuskit.chatnotifications.color.default"><value>Default</value></data>
+    <data name="nexuskit.chatnotifications.color.yellow"><value>Yellow</value></data>
+    <data name="nexuskit.chatnotifications.color.green"><value>Green</value></data>
+    <data name="nexuskit.chatnotifications.color.red"><value>Red</value></data>
+    <data name="nexuskit.chatnotifications.color.blue"><value>Blue</value></data>
+    <data name="nexuskit.chatnotifications.color.cyan"><value>Cyan</value></data>
+    <data name="nexuskit.chatnotifications.color.grey"><value>Grey</value></data>
+</root>

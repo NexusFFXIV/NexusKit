@@ -1,0 +1,53 @@
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+	<PropertyGroup>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Platforms>x64</Platforms>
+		<Platform Condition=" '$(Platform)' == '' Or '$(Platform)' == 'AnyCPU' ">x64</Platform>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>NexusKit.ChatNotifications</RootNamespace>
+		<AssemblyName>NexusKit.ChatNotifications</AssemblyName>
+		<Description>Pluggable chat-notification framework for NexusKit. Producer/sink contracts plus an auto-settings UI tab.</Description>
+		<IsPackable>true</IsPackable>
+		<Deterministic>true</Deterministic>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>CS1591;MSB3277;CS0419</NoWarn>
+		<!-- Library, not a Dalamud plugin. Skip the manifest packager. -->
+		<Use_DalamudPackager>false</Use_DalamudPackager>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\NexusKit.Core\NexusKit.Core.csproj" />
+		<ProjectReference Include="..\NexusKit.Persistence\NexusKit.Persistence.csproj" />
+		<!-- For the IAutoSettingsSection extension hook; chat-notification
+		     framework contributes a dedicated tab to the auto-settings window. -->
+		<ProjectReference Include="..\NexusKit.Ui\NexusKit.Ui.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Strings.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Strings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Strings.de.resx">
+			<DependentUpon>Strings.resx</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Strings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Strings.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" />
+		<None Include="docs\**\*.md" />
+	</ItemGroup>
+</Project>

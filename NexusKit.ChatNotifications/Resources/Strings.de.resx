@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true" />
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+
+    <data name="nexuskit.chatnotifications.nav"><value>Benachrichtigungen</value></data>
+    <data name="nexuskit.chatnotifications.empty"><value>Es wurden noch keine Benachrichtigungs-Arten registriert.</value></data>
+    <data name="nexuskit.chatnotifications.enabled"><value>Aktiv</value></data>
+    <data name="nexuskit.chatnotifications.channel"><value>Kanal</value></data>
+    <data name="nexuskit.chatnotifications.color"><value>Farbe</value></data>
+    <data name="nexuskit.chatnotifications.group.default"><value>Sonstiges</value></data>
+    <data name="nexuskit.chatnotifications.suppressed_by"><value>Deaktiviert, solange „{0}" aktiv ist — die deckt dieses Ereignis bereits ab.</value></data>
+
+    <data name="nexuskit.chatnotifications.channel.echo"><value>Echo</value></data>
+    <data name="nexuskit.chatnotifications.channel.notice"><value>Notiz</value></data>
+    <data name="nexuskit.chatnotifications.channel.systemmessage"><value>System</value></data>
+    <data name="nexuskit.chatnotifications.channel.debug"><value>Debug</value></data>
+    <data name="nexuskit.chatnotifications.channel.none"><value>(stumm)</value></data>
+    <data name="nexuskit.chatnotifications.channel.urgent"><value>Dringend</value></data>
+    <data name="nexuskit.chatnotifications.channel.say"><value>Sprechen</value></data>
+    <data name="nexuskit.chatnotifications.channel.shout"><value>Rufen</value></data>
+    <data name="nexuskit.chatnotifications.channel.tellincoming"><value>Flüstern</value></data>
+    <data name="nexuskit.chatnotifications.channel.party"><value>Gruppe</value></data>
+    <data name="nexuskit.chatnotifications.channel.alliance"><value>Allianz</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls1"><value>Kontaktkreis 1</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls2"><value>Kontaktkreis 2</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls3"><value>Kontaktkreis 3</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls4"><value>Kontaktkreis 4</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls5"><value>Kontaktkreis 5</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls6"><value>Kontaktkreis 6</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls7"><value>Kontaktkreis 7</value></data>
+    <data name="nexuskit.chatnotifications.channel.ls8"><value>Kontaktkreis 8</value></data>
+    <data name="nexuskit.chatnotifications.channel.freecompany"><value>Freie Gesellschaft</value></data>
+    <data name="nexuskit.chatnotifications.channel.novicenetwork"><value>Neulings-Netzwerk</value></data>
+    <data name="nexuskit.chatnotifications.channel.customemote"><value>Eigene Emotes</value></data>
+    <data name="nexuskit.chatnotifications.channel.standardemote"><value>Standard-Emotes</value></data>
+    <data name="nexuskit.chatnotifications.channel.yell"><value>Schreien</value></data>
+    <data name="nexuskit.chatnotifications.channel.crossparty"><value>Gruppe (weltübergr.)</value></data>
+    <data name="nexuskit.chatnotifications.channel.pvpteam"><value>PvP-Team</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell1"><value>Welten-Kontaktkreis 1</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell2"><value>Welten-Kontaktkreis 2</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell3"><value>Welten-Kontaktkreis 3</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell4"><value>Welten-Kontaktkreis 4</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell5"><value>Welten-Kontaktkreis 5</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell6"><value>Welten-Kontaktkreis 6</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell7"><value>Welten-Kontaktkreis 7</value></data>
+    <data name="nexuskit.chatnotifications.channel.crosslinkshell8"><value>Welten-Kontaktkreis 8</value></data>
+
+    <data name="nexuskit.chatnotifications.color.default"><value>Standard</value></data>
+    <data name="nexuskit.chatnotifications.color.yellow"><value>Gelb</value></data>
+    <data name="nexuskit.chatnotifications.color.green"><value>Grün</value></data>
+    <data name="nexuskit.chatnotifications.color.red"><value>Rot</value></data>
+    <data name="nexuskit.chatnotifications.color.blue"><value>Blau</value></data>
+    <data name="nexuskit.chatnotifications.color.cyan"><value>Cyan</value></data>
+    <data name="nexuskit.chatnotifications.color.grey"><value>Grau</value></data>
+</root>
