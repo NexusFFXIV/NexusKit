@@ -86,10 +86,16 @@ Suffix conventions (descending stability):
 - `-beta.N` — feature-complete but UI/edge-cases pending
 - `-preview.N` — early feedback, may break
 
-Consumers of NexusKit (NexusKit.Modules, plugins) **stay on their floating `[X.Y.Z,)` `PackageReference`** during pre-release periods — the floating spec ignores pre-releases by default, so stable consumers continue to pull stable versions. A consumer that wants to test against the pre-release pins it explicitly:
+Consumers of NexusKit (NexusKit.Modules, plugins) **keep their existing `[X.Y.Z,)` `PackageReference` ranges** during pre-release periods — `PackageReference` ranges ignore pre-releases by default, so stable consumers continue to resolve the previous stable. A consumer that wants to test against the pre-release pins it explicitly:
 
 ```xml
 <PackageReference Include="NexusKit.Core" Version="0.2.0-rc.1" />
 ```
 
-After validation, cut the stable version (`v0.2.0`) — no separate code change needed, just the tag. Consumers on floating refs automatically pick it up.
+After validation, cut the stable version (`v0.2.0`). **The consumers' constraint floor has to move forward** before they'll actually resolve `0.2.0`: NuGet's `PackageReference` picks the **lowest** version satisfying the range, not the latest, so leaving the floor at `[0.1.0,)` would keep resolving `0.1.0` even with `0.2.0` on the feed. The promotion step is:
+
+1. Bump the range floor in each consumer's csprojs, e.g. `[0.1.0,)` → `[0.2.0,)`
+2. Regenerate `packages.lock.json` (`dotnet restore --force-evaluate`, or rely on CI to refresh on the next push)
+3. Tag the consumer
+
+CI's "List outdated NuGet dependencies" step in each consumer flags this — if `Resolved < Latest` after a NexusKit release, the floor on that consumer still needs raising.
