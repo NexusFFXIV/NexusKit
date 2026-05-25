@@ -29,7 +29,15 @@ internal sealed class PluginLoggerProvider : ILoggerProvider
 
         public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
-        public bool IsEnabled(LogLevel logLevel) => logLevel != LogLevel.None;
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            if (logLevel == LogLevel.None) return false;
+#if !DEBUG
+            // Release-Builds: Trace/Debug/Information aus /xllog raushalten.
+            if (logLevel < LogLevel.Warning) return false;
+#endif
+            return true;
+        }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
