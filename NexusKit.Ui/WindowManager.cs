@@ -1,3 +1,4 @@
+using Dalamud.Plugin.Services;
 using Microsoft.Extensions.DependencyInjection;
 using NexusKit.Ui.Abstractions;
 
@@ -42,4 +43,18 @@ internal sealed class WindowManager : IWindowManager
 
     public T? Get<T>() where T : NexusWindow
         => mServices.GetService<T>();
+
+    public void Invoke<T>(Action<T> action) where T : NexusWindow
+    {
+        if (mServices.GetService<T>() is not { } w) return;
+
+        // Window mutations must land on the framework thread (that's where the
+        // UI reads them). RunOnFrameworkThread runs inline when already on it,
+        // so on-thread callers pay nothing. Fall back to a direct call if no
+        // framework service is registered (e.g. headless test hosts).
+        if (mServices.GetService<IFramework>() is { } framework)
+            framework.RunOnFrameworkThread(() => action(w));
+        else
+            action(w);
+    }
 }
