@@ -35,4 +35,11 @@ public interface IWindowManager
 
     /// <summary>Retrieve the registered window directly. Returns null when unregistered.</summary>
     T? Get<T>() where T : NexusWindow;
+
+    /// <summary>Resolve the registered window of type <typeparamref name="T"/> and run
+    /// <paramref name="action"/> against it on Dalamud's framework thread, so callers
+    /// reaching in from a background thread (e.g. a chat-link handler whose work went
+    /// async) don't have to marshal themselves. Runs inline when already on the
+    /// framework thread; no-op when the window isn't registered.</summary>
+    void Invoke<T>(Action<T> action) where T : NexusWindow;
 }
