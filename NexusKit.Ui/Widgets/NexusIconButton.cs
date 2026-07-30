@@ -48,7 +48,11 @@ public static class NexusIconButton
             var clicked = ImGui.Button($"{icon.ToIconString()}##nx_btn_{(int)icon}",
                 size ?? DefaultSize);
             ImGui.PopFont();
-            if (!string.IsNullOrEmpty(tooltip) && ImGui.IsItemHovered())
+            // AllowWhenDisabled is what makes the tooltip survive an enclosing
+            // BeginDisabled scope. Without it a greyed-out button explains
+            // nothing, which is the one moment the explanation matters most.
+            if (!string.IsNullOrEmpty(tooltip)
+                && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                 ImGui.SetTooltip(tooltip);
             return clicked;
         }
