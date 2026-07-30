@@ -17,6 +17,15 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.8" />
+		<!-- Transitive-to-direct promotion to escape GHSA-2m69-gcr7-jv3q (high):
+		     SQLitePCLRaw.lib.e_sqlite3 <= 2.1.11 bundles a vulnerable SQLite.
+		     EF Core .Sqlite still pins bundle_e_sqlite3 2.1.11 as of 10.0.9, so
+		     the floor has to be raised here. This package is the native SQLite
+		     binary and declares no dependencies of its own, so lifting it alone
+		     leaves SQLitePCLRaw.core/provider on 2.1.11 by design — that is the
+		     intended upgrade path for a native-only patch. Drop this reference
+		     once EF Core ships a bundle that already resolves >= 2.1.12. -->
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
 	</ItemGroup>
 
 	<ItemGroup>
