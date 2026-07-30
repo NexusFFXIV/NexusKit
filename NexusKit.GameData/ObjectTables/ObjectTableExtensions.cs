@@ -47,12 +47,21 @@ public static class ObjectTableExtensions
 
     /// <summary>Read a player from the table by stable ContentId, or null when not present.</summary>
     public static VisiblePlayer? GetPlayerByContentId(this IObjectTable objectTable, ulong contentId)
+        => objectTable.FindPlayerCharacter(contentId) is { } pc ? ToVisiblePlayer(pc) : null;
+
+    /// <summary>Locate the <b>live</b> game object for a ContentId, or null when
+    /// the player isn't in the table (out of range, different zone, logged out).
+    /// <para>Prefer <see cref="GetPlayerByContentId"/> — it hands back an immutable
+    /// snapshot that is safe to keep. Use this overload only for state that must be
+    /// read fresh and is never stored, such as <c>Position</c>, and consume the
+    /// result within the same framework-thread callback.</para></summary>
+    public static IPlayerCharacter? FindPlayerCharacter(this IObjectTable objectTable, ulong contentId)
     {
         foreach (var obj in objectTable)
         {
             if (obj is not IPlayerCharacter pc) continue;
             if (GetContentId(pc) != contentId) continue;
-            return ToVisiblePlayer(pc);
+            return pc;
         }
         return null;
     }
