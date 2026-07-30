@@ -4,6 +4,8 @@ NexusKit follows [Semantic Versioning](https://semver.org/). Versions are derive
 
 All 7 packages in this repo ship with the **same version** (synchronous release strategy). That fits the framework's tight internal coupling — there is no scenario where, say, `NexusKit.Core` 0.2.0 is meant to be consumed with `NexusKit.Hosting` 0.1.0.
 
+> **Never add a `<Version>` to a csproj here.** MinVer deriving the version from the tag is what makes tag and package version impossible to desynchronise. PlayerNexusTracker had a hardcoded version instead and shipped a release whose assembly version did not match its tag, which made the release invisible to existing users. If you find yourself wanting to pin a version, that is a signal something else is wrong.
+
 ## Cutting a release
 
 1. **Verify `main` is green**:
