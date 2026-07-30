@@ -29,13 +29,24 @@ public static class NexusIconToolbar
 
         internal Slot(float width, Action draw) { Width = width; Draw = draw; }
 
+        /// <summary>Standard icon-button slot. Pass
+        /// <paramref name="disabledTooltip"/> to explain *why* the button is
+        /// unavailable — a greyed-out icon whose tooltip still describes the
+        /// action it won't perform tells the user nothing. Falls back to
+        /// <paramref name="tooltip"/> when omitted.</summary>
         public static Slot Button(FontAwesomeIcon icon, string tooltip,
                                   Action onClick, bool enabled = true,
+                                  string? disabledTooltip = null,
                                   float width = DefaultSlotWidth)
             => new(width, () =>
             {
+                var shown = enabled || string.IsNullOrEmpty(disabledTooltip)
+                    ? tooltip
+                    : disabledTooltip!;
                 if (!enabled) ImGui.BeginDisabled();
-                NexusIconButton.Draw(icon, tooltip, onClick);
+                // Draw's hover check uses AllowWhenDisabled, so the tooltip
+                // still shows through this scope; the click is what's suppressed.
+                NexusIconButton.Draw(icon, shown, onClick);
                 if (!enabled) ImGui.EndDisabled();
             });
 

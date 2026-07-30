@@ -37,14 +37,28 @@ that fits — they're independent.
 | `NexusGroupBox` | Yellow title + column-bounded separator + body. Helpers: `DrawColumns(...)`, `DrawGrid(perRow, ...)` for paired / wrapped layouts. Optional `titleSuffix` for muted inline metadata. |
 | `NexusSplitLayout` | Horizontal master/detail with fixed left width. |
 | `NexusStatCard` | "Label + big value + sub-label" tile with optional `LabelSuffix` / `ValueSuffix` slots. |
-| `NexusKeyValueRow` | Grey label : value pair with optional custom value drawer. |
+| `NexusKeyValueRow` | Grey label : value pair with optional custom value drawer. Use `DrawWithControl` when the value column holds a framed control (button, combo) so the label centres against it instead of sitting high in a taller row. |
 | `NexusTable` | `BeginTable` wrapper that takes a column spec + clipper-driven row callback. |
 | `NexusListClipper` | Virtualized `ForEach<T>` over a list (wraps `ImGuiListClipper`). |
 | `NexusLoadingSpinner` | Indeterminate spinner. |
 | `NexusHint` | Inline icon + hover tooltip (defaults to `DalamudYellow`, SameLine). |
-| `NexusIconButton` | Icon-only button with tooltip; returns bool or takes `Action onClick`. |
+| `NexusIconButton` | Icon-only button with tooltip; returns bool or takes `Action onClick`. Tooltips are shown with `ImGuiHoveredFlags.AllowWhenDisabled`, so they survive an enclosing `BeginDisabled` scope. |
 | `NexusRoundedAvatar` | Rounded child + centred icon glyph; corner radius scales with size. |
 | `NexusIconToolbar` | Right-aligned row of icon-button slots that auto-computes its own width from the slots that are actually present. Slots carry their own width so a spinner narrower than a standard button doesn't leave a gap. |
+
+### Disabled buttons should say why
+
+`Slot.Button(..., enabled: false)` greys the button out and swallows the click. Pass
+`disabledTooltip` as well, or the hover text will keep describing an action the button
+won't perform:
+
+```csharp
+NexusIconToolbar.Slot.Button(FontAwesomeIcon.MapMarkerAlt,
+    loc.Get("…mark_position"),
+    () => marker.MarkPosition(id),
+    enabled: inRange,
+    disabledTooltip: loc.Get("…mark_position.disabled"));
+```
 
 ## Registration
 

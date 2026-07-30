@@ -27,4 +27,18 @@ public static class NexusKeyValueRow
         ImGui.SameLine(keyWidth);
         drawValue();
     }
+
+    /// <summary>Variant for a value column containing a framed control (button,
+    /// combo, input). Such a control is taller than a line of text, which would
+    /// otherwise leave the label pinned to the top of a row taller than its
+    /// neighbours; frame-aligning the label centres it instead. Callers should
+    /// call <c>ImGui.AlignTextToFramePadding()</c> before any text they draw
+    /// alongside the control for the same reason.</summary>
+    public static void DrawWithControl(string key, Action drawValue, float keyWidth = DefaultKeyWidth)
+    {
+        ImGui.AlignTextToFramePadding();
+        ImGui.TextColored(ImGuiColors.DalamudGrey, key);
+        ImGui.SameLine(keyWidth);
+        drawValue();
+    }
 }
