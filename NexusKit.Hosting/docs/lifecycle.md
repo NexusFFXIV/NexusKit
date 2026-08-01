@@ -82,12 +82,51 @@ introduce scoped lifetimes, this flips to `true`.
 The exception propagates out of `BuildAsync`, which propagates out of
 `Plugin.LoadAsync`. Dalamud logs the failure to `/xllog` and the plugin is
 marked unloaded. `IDisposable` services registered up to that point are
-**not** disposed (the provider was never built). The same is true if
-`EnsureCreatedAsync` or a migration throws after the provider is built — the
-provider is then orphaned.
+**not** disposed — the provider was never built, so there is nothing to
+dispose.
 
-We may want a try/dispose-cleanup wrapper later; today the cost is one log
-line and the user retrying after a fix.
+Once the provider *has* been built (`EnsureCreatedAsync`, a migration, a view
+builder, or one of the eager resolves throwing), `BuildAsync` cleans up: the
+whole post-`BuildServiceProvider` block is wrapped in a try/catch that logs at
+Error, runs `new PluginHost(provider).DisposeAsync()` — so the cleanup uses the
+same `RequestStop`-then-teardown ordering as a normal shutdown — and rethrows
+the original exception. Without this the provider leaked undisposed *with live
+background loops*, because `IDbMaintenanceService` and every
+`IPluginBackgroundService` start their workers during construction.
+
+`Plugin.DisposeAsync` on the consumer side must still null-guard its host
+field: Dalamud calls `DisposeAsync` even when `LoadAsync` threw, and may call
+it more than once.
+
+### Do NOT feed `BuildAsync`'s token to `PluginLifetime`
+
+`PluginLifetime`'s CTS is deliberately **not** linked to the `ct` passed to
+`BuildAsync`. Under Dalamud that token is a **60-second load timeout**, not an
+unload signal: `LocalPlugin.LoadAsync` fabricates its own
+`CancellationTokenSource` with `CancelAfter(TimeSpan.FromSeconds(60))` whenever
+the caller supplies no token, and no Dalamud call site supplies one. It fires
+whether the load succeeded or not, and nothing disposes it.
+
+Linking to it meant the lifetime went `Stopping → Stopped` 60 seconds after
+every load while the plugin carried on running, permanently disabling every
+`IsStopping`-gated service — observation persistence, encounter tracking,
+history, the refresh-queue worker, DB maintenance — with zero log output. It
+also *consumed* the last-chance write window a minute after load, so at the
+real unload `SetState(Stopping)` returned early and subscribers never got their
+final synchronous write at all.
+
+`ct` is therefore used for exactly one thing inside `BuildAsync`:
+`DbInitializer.InitializeAsync`, so a genuinely aborted load stops migrating.
+A host that has a *real* shutdown token opts in explicitly via
+`WithShutdownSignal(...)`, which is `Register`ed rather than linked so the
+external path gets the same two-phase `Stopping` (token still live) → `Stopped`
+(token cancelled) semantics as `RequestStop`.
+
+Both shutdown transitions log at **Warning** with a reason
+(`PluginHost dispose` vs `external shutdown signal`). That line is the only
+way to tell "the plugin unloaded" from "the plugin is still running but its
+lifetime token was cancelled", so it is deliberately above the Release-build
+log-level floor.
 
 ## `PluginLoggerProvider`
 
