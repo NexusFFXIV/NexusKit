@@ -1,0 +1,44 @@
+<Project>
+
+  <!-- Central Package Management: every NuGet version for this repo lives here,
+       and the csprojs carry bare <PackageReference Include="..."/> only.
+
+       This exists to keep Dependabot's grouped bumps atomic. With per-csproj
+       versions a group update could land in some projects and miss others —
+       one project keeping Microsoft.Extensions.Logging at 10.0.9 while
+       EF Core moved to 10.0.10 is enough to fail the build with NU1605
+       (package downgrade, escalated to an error by TreatWarningsAsErrors).
+       That is what blocked the microsoft-platform PRs from auto-merging.
+       One file means a version can only move everywhere at once. -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Keep these on one version. EF Core pulls specific
+         Microsoft.Extensions.* versions transitively, so a split between the
+         two families is exactly what produces NU1605. -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Native SQLite binary, promoted transitive→direct in NexusKit.Persistence
+         to escape GHSA-2m69-gcr7-jv3q; see the comment at the reference site. -->
+    <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
+    <PackageVersion Include="MinVer" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Injected by Dalamud.NET.Sdk; their versions are stripped in
+         Directory.Build.targets so they resolve from here instead. Keep these
+         in step with the SDK unless there is a reason to diverge. -->
+    <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.2.39" />
+    <PackageVersion Include="DalamudPackager" Version="15.0.0" />
+  </ItemGroup>
+
+</Project>
