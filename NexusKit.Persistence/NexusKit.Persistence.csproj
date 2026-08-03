@@ -25,7 +25,7 @@
 		     leaves SQLitePCLRaw.core/provider on 2.1.11 by design — that is the
 		     intended upgrade path for a native-only patch. Drop this reference
 		     once EF Core ships a bundle that already resolves >= 2.1.12. -->
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="2.1.12" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
 	</ItemGroup>
 
 	<ItemGroup>
