@@ -15,8 +15,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.10" />
 		<!-- Transitive-to-direct promotion to escape GHSA-2m69-gcr7-jv3q (high):
 		     SQLitePCLRaw.lib.e_sqlite3 <= 2.1.11 bundles a vulnerable SQLite.
 		     EF Core .Sqlite still pins bundle_e_sqlite3 2.1.11 as of 10.0.9, so
