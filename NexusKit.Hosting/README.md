@@ -15,9 +15,9 @@ Hosting stitches everything else together.
 
 | Type | File | Purpose |
 |---|---|---|
-| `PluginHostBuilder` | `PluginHostBuilder.cs` | Fluent builder: `WithContext / WithLogSink / WithModule / ConfigureServices / BuildAsync`. |
+| `PluginHostBuilder` | `PluginHostBuilder.cs` | Fluent builder: `WithContext / WithLogSink / WithModule / ConfigureServices / WithShutdownSignal / BuildAsync`. |
 | `PluginHost` | `PluginHost.cs` | Result of `BuildAsync`. Holds the `ServiceProvider` and disposes it. `IAsyncDisposable` + `IDisposable`. Drives `PluginLifetime` through `Stopping → Stopped` before tearing down singletons. |
-| `PluginLifetime` (internal) | `PluginLifetime.cs` | `IPluginLifetime` implementation. Owns the `CancellationTokenSource` for `Stopping` and the synchronous state-machine. |
+| `PluginLifetime` | `PluginLifetime.cs` | `IPluginLifetime` implementation — **public**, and its constructor is public API surface. Owns the `CancellationTokenSource` for `Stopping` and the synchronous state-machine. |
 | `LifetimeBridge` (internal) | `LifetimeBridge.cs` | Eager-resolved by `BuildAsync`. Reads `ISessionStateProvider.IsActive` for the initial Idle/Active state and subscribes Activated/Deactivated. No-op when no provider is registered. |
 | `PluginLoggerProvider` (internal) | `Logging/PluginLoggerProvider.cs` | `ILoggerProvider` that pipes `ILogger<T>` → `IPluginLogSink`. |
 
