@@ -22,6 +22,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!-- Only the abstraction: this project stays silent on the render path
+		     (see DalamudPlayerMapMarker), but a hook that fails to install has
+		     to say so — otherwise the feature is simply missing with no trace. -->
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\NexusKit.Core\NexusKit.Core.csproj" />
 	</ItemGroup>
 
