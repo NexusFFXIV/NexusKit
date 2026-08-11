@@ -31,7 +31,7 @@ protected SettingsWindow(string name, ImGuiWindowFlags flags = ImGuiWindowFlags.
 for state persistence across reloads. The convention from our own code:
 
 ```csharp
-public PnTrackerMainWindow() : base("PlayerNexusTracker###PNT_Main")
+public MyPluginMainWindow() : base("MyPlugin###MyPlugin_Main")
 {
     Size = new Vector2(600, 400);
     SizeCondition = ImGuiCond.FirstUseEver;

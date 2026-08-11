@@ -3,55 +3,55 @@
 Every IPC this plugin publishes, in one place. Foreign plugins consume by
 the full name; the format is
 `[PluginName].[Subsystem].[Member]` — see
-[NexusKit.Ipc/docs/naming.md](../NexusKit/NexusKit.Ipc/docs/naming.md).
+[NexusKit.Ipc/docs/naming.md](../NexusKit.Ipc/docs/naming.md).
 
-The examples below assume the plugin is registered as `PlayerNexusTracker`.
+The examples below assume the plugin is registered as `MyPlugin`.
 Replace the prefix when this framework is consumed by a different plugin.
 
 ## FFXIVCollect module
 
-Source: [NexusKit.Modules.FfxivCollect](../NexusModules/External/NexusKit.Modules.FfxivCollect/README.md).
+Source: [NexusKit.Modules.FfxivCollect](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.FfxivCollect/README.md).
 Backing client: `IFfxivCollectClient`. JSON payloads.
 
 | Full name | Signature | Returns |
 |---|---|---|
-| `PlayerNexusTracker.FfxivCollect.GetCharacterJson` | `Func<ulong, Task<string?>>` | JSON of `Character` |
-| `PlayerNexusTracker.FfxivCollect.GetMountsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Mount>` |
-| `PlayerNexusTracker.FfxivCollect.GetMinionsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Minion>` |
-| `PlayerNexusTracker.FfxivCollect.GetAchievementsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Achievement>` |
+| `MyPlugin.FfxivCollect.GetCharacterJson` | `Func<ulong, Task<string?>>` | JSON of `Character` |
+| `MyPlugin.FfxivCollect.GetMountsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Mount>` |
+| `MyPlugin.FfxivCollect.GetMinionsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Minion>` |
+| `MyPlugin.FfxivCollect.GetAchievementsJson` | `Func<ulong, Task<string?>>` | JSON of `ListResponse<Achievement>` |
 
 All four respect the module's `ModuleEnabled` toggle: while disabled, every IPC
 returns `null` (no HTTP, no cache read).
 
 Model schemas: see
-[NexusKit.Modules.FfxivCollect/docs/api-reference.md](../NexusModules/External/NexusKit.Modules.FfxivCollect/docs/api-reference.md).
+[NexusKit.Modules.FfxivCollect/docs/api-reference.md](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.FfxivCollect/docs/api-reference.md).
 
 ## Lodestone module
 
-Source: [NexusKit.Modules.Lodestone](../NexusModules/External/NexusKit.Modules.Lodestone/README.md).
+Source: [NexusKit.Modules.Lodestone](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.Lodestone/README.md).
 Backing client: `ILodestoneClient` (NetStone under the hood). JSON payloads.
 
 | Full name | Signature | Returns |
 |---|---|---|
-| `PlayerNexusTracker.Lodestone.GetCharacterJson` | `Func<ulong, Task<string?>>` | JSON of `CharacterSummary` |
-| `PlayerNexusTracker.Lodestone.SearchCharacterJson` | `Func<string, string, Task<string?>>` | JSON of `CharacterSearchResult` |
+| `MyPlugin.Lodestone.GetCharacterJson` | `Func<ulong, Task<string?>>` | JSON of `CharacterSummary` |
+| `MyPlugin.Lodestone.SearchCharacterJson` | `Func<string, string, Task<string?>>` | JSON of `CharacterSearchResult` |
 
 Both respect the module's `ModuleEnabled` toggle.
 
 Model schemas: see
-[NexusKit.Modules.Lodestone/docs/api-reference.md](../NexusModules/External/NexusKit.Modules.Lodestone/docs/api-reference.md).
+[NexusKit.Modules.Lodestone/docs/api-reference.md](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.Lodestone/docs/api-reference.md).
 
 ## Consuming from a foreign plugin
 
 ```csharp
 // Function (typed)
 var get = pluginInterface.GetIpcSubscriber<ulong, Task<string?>>(
-    "PlayerNexusTracker.FfxivCollect.GetCharacterJson");
+    "MyPlugin.FfxivCollect.GetCharacterJson");
 var json = await get.InvokeFunc(lodestoneId);
 
 // Search with two args
 var search = pluginInterface.GetIpcSubscriber<string, string, Task<string?>>(
-    "PlayerNexusTracker.Lodestone.SearchCharacterJson");
+    "MyPlugin.Lodestone.SearchCharacterJson");
 var json = await search.InvokeFunc("Sora Aratani", "Phoenix");
 ```
 

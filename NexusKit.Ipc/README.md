@@ -129,7 +129,7 @@ recommended consumer shape.
 
 - [docs/naming.md](docs/naming.md) — IPC name format, JSON convention for
   cross-plugin data, versioning, lifecycle.
-- [`NexusKit.Modules.PluginBridge`](../../NexusModules/External/NexusKit.Modules.PluginBridge/README.md)
+- [`NexusKit.Modules.PluginBridge`](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.PluginBridge/README.md)
   — the adapter pattern for consuming foreign plugins behind a Settings
   UI status surface.
 

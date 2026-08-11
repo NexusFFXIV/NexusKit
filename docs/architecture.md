@@ -6,7 +6,7 @@ runs when a plugin loads.
 ## Project graph
 
 ```
-PlayerNexusTracker.Plugin                       (Dalamud-tied, IDalamudPlugin)
+MyPlugin.Plugin                       (Dalamud-tied, IDalamudPlugin)
         │
         ├── NexusKit.Modules.PlayerEnrichment   (cross-cutting bridge)
         │       │
@@ -24,7 +24,7 @@ PlayerNexusTracker.Plugin                       (Dalamud-tied, IDalamudPlugin)
         ├── NexusKit.Modules.PluginBridge           (Dalamud-free; foreign-plugin IPC adapters)
         └── NexusKit.ChatNotifications              (Dalamud-tied; chat publisher framework)
 
-PlayerNexusTracker.Plugin also references directly:
+MyPlugin.Plugin also references directly:
         ├── NexusKit.Ui          (Dalamud-tied; Windows, widgets, ImGui, AutoSettingsSections)
         ├── NexusKit.Ipc         (Dalamud-tied; ICallGate wrappers + IDalamudPluginProbe)
         ├── NexusKit.Hosting     (Dalamud-free; composition root + lifetime state machine)
@@ -54,7 +54,7 @@ under `NexusModules/` **must not** reference Dalamud assemblies. They define
 abstractions (`IPluginContext`, `IPluginLogSink`, `IBrowserLauncher`,
 `IIpcRegistry`, …) and consume them.
 
-`NexusKit.Ui`, `NexusKit.Ipc`, and `PlayerNexusTracker.Plugin` are the only
+`NexusKit.Ui`, `NexusKit.Ipc`, and `MyPlugin.Plugin` are the only
 places that reference Dalamud. They wire the abstractions to Dalamud's APIs.
 
 This keeps modules reusable outside Dalamud (unit tests, alternative hosts)
@@ -67,7 +67,7 @@ and prevents an accidental coupling drift.
 - **Module** (NexusKit.Modules.\*) — a self-contained reusable feature with its
   own settings, optional DB tables, optional IPC providers, optional
   translations. Plugin opts in via `services.AddNexusKitXyz()`.
-- **Plugin** (PlayerNexusTracker.Plugin) — the only place where this specific
+- **Plugin** (MyPlugin.Plugin) — the only place where this specific
   plugin's domain code lives. Anything plugin-specific stays here.
 
 ## Where does new code go?
@@ -81,7 +81,7 @@ and prevents an accidental coupling drift.
 | Dalamud IPC plumbing | `NexusKit.Ipc` |
 | Reusable feature that calls external APIs, scrapes, or manages domain data | new `NexusKit.Modules.Xyz` |
 | Adapter for a foreign Dalamud plugin (Lifestream, vnavmesh, …) | `NexusKit.Modules.PluginBridge/Adapters/<Plugin>/` |
-| Anything PlayerNexusTracker-specific (Player tracking domain, plugin commands) | `PlayerNexusTracker.Plugin` |
+| Anything MyPlugin-specific (Player tracking domain, plugin commands) | `MyPlugin.Plugin` |
 
 If you're unsure, default to plugin first. Promote into a module / kit when a
 second consumer materialises.
@@ -99,7 +99,7 @@ Build DalamudPluginLogSink (Plugin → IPluginLogSink)
 new PluginHostBuilder()
    .WithContext(ctx)
    .WithLogSink(sink)
-   .WithModule(PlayerNexusTrackerModule)         ← plugin's IPluginModule
+   .WithModule(MyPluginModule)         ← plugin's IPluginModule
    .ConfigureServices(s =>
        s.AddSingleton(PluginInterface, CommandManager, ClientState,
                       DataManager, Framework, ObjectTable,
@@ -114,7 +114,7 @@ new PluginHostBuilder()
         .AddWindow<DebugWindow>())               ← extra plugin windows
    .BuildAsync(ct)
 
-// Inside PlayerNexusTrackerModule.Register:
+// Inside MyPluginModule.Register:
 //   services.AddSingleton<ISessionStateProvider, DalamudSessionStateProvider>()
 //   services.AddNexusKitPlayerEnrichment()      ← brings Internal+External
 //                                                 + refresh queue + bridges
@@ -221,13 +221,13 @@ One SQLite file per plugin, at
 Tables are contributed by `IEntityModule` implementations across the framework
 and any module the plugin opted into. Schema evolution is module-scoped via
 `IMigrationModule` — see
-[NexusKit.Persistence/docs/migrations.md](../NexusKit/NexusKit.Persistence/docs/migrations.md).
+[NexusKit.Persistence/docs/migrations.md](../NexusKit.Persistence/docs/migrations.md).
 
 Routine housekeeping is centralised in `DbMaintenanceService`. Modules
 contribute units of periodic work as `IDbMaintenanceContributor` (cache
 eviction, refresh-queue prune, weekly VACUUM/ANALYZE/OPTIMIZE), and the
 framework runs each on its declared `Interval`. See
-[NexusKit.Persistence/docs/maintenance.md](../NexusKit/NexusKit.Persistence/docs/maintenance.md).
+[NexusKit.Persistence/docs/maintenance.md](../NexusKit.Persistence/docs/maintenance.md).
 
 ## Lifetime and session state
 
@@ -250,7 +250,7 @@ host resolves all of them eagerly.
 
 Inbound (we consume foreign IPCs): use full name as-is, e.g.
 `Visibility.Disable`. See
-[NexusKit.Ipc/docs/naming.md](../NexusKit/NexusKit.Ipc/docs/naming.md).
+[NexusKit.Ipc/docs/naming.md](../NexusKit.Ipc/docs/naming.md).
 
 ## Cross-plugin integration
 
@@ -280,7 +280,7 @@ bindable. A runtime invocation failure is caught by
 `IIpcFunc<…>.TryInvoke` / `IIpcAction<…>.TryInvoke` and surfaced as a
 `false` return.
 
-See [`NexusKit.Modules.PluginBridge/docs/plugin-bridge.md`](../NexusModules/External/NexusKit.Modules.PluginBridge/docs/plugin-bridge.md)
+See [`NexusKit.Modules.PluginBridge/docs/plugin-bridge.md`](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/External/NexusKit.Modules.PluginBridge/docs/plugin-bridge.md)
 for the design rationale and adapter-author howto.
 
 ---

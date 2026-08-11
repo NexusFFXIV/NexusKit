@@ -18,7 +18,7 @@ obvious from the name alone.
 
 | Segment | Source |
 |---|---|
-| `PluginName` | `IPluginContext.PluginName` — set once by the plugin (e.g. `"PlayerNexusTracker"`). The framework auto-prefixes; you don't pass it. |
+| `PluginName` | `IPluginContext.PluginName` — set once by the plugin (e.g. `"MyPlugin"`). The framework auto-prefixes; you don't pass it. |
 | `Subsystem` | Module name (`"FfxivCollect"`, `"Lodestone"`, …) or a plugin-level component name (`"Settings"`, `"Tracker"`, …). |
 | `Member` | The function or event itself (`"GetCharacterJson"`, `"PlayerSighted"`, …). |
 
@@ -30,8 +30,8 @@ ipc.RegisterFunc<ulong, Task<string?>>(
     function:  "GetCharacterJson",
     handler:   async id => …);
 
-// Effective registration name (for a plugin named "PlayerNexusTracker"):
-// "PlayerNexusTracker.FfxivCollect.GetCharacterJson"
+// Effective registration name (for a plugin named "MyPlugin"):
+// "MyPlugin.FfxivCollect.GetCharacterJson"
 ```
 
 ## Format for foreign IPCs
@@ -67,7 +67,7 @@ registrations.Add(ipc.RegisterFunc<ulong, Task<string?>>(
 
 // Consumer side (in a foreign plugin)
 var func = pi.GetIpcSubscriber<ulong, Task<string?>>(
-    "PlayerNexusTracker.FfxivCollect.GetCharacterJson");
+    "MyPlugin.FfxivCollect.GetCharacterJson");
 var json = await func.InvokeFunc(lodestoneId);
 var character = JsonSerializer.Deserialize<MyMirrorCharacter>(json);
 ```

@@ -11,7 +11,7 @@ Each producer is a DI singleton that:
 ## When to create a new producer
 
 One producer = one source of related notifications. Examples in the
-PlayerNexusTracker plugin:
+MyPlugin plugin:
 
 | Producer | Kind id | Event source |
 |---|---|---|

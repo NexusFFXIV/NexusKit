@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>NexusKit.Sync</RootNamespace>
+		<AssemblyName>NexusKit.Sync</AssemblyName>
+		<Description>The client/server sync norm: contract model, canonical serialisation and hashing, payload validation, compatibility checking, and the ISyncProtocol interface. Dalamud-free and dependency-free — a plugin takes it on one side, a server on the other.</Description>
+		<IsPackable>true</IsPackable>
+		<Deterministic>true</Deterministic>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>CS1591</NoWarn>
+		<!-- Stricter than the sibling libraries on purpose. This assembly defines what every
+		     client and server has to agree on, including implementations we did not write, so
+		     a warning here is worth stopping the build for. -->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<Platforms>x64</Platforms>
+	</PropertyGroup>
+
+	<!--
+		Deliberately NO PackageReference, not even the Microsoft.Extensions.* abstractions the
+		other libraries take. A Dalamud plugin references this on one side and an ASP.NET Core
+		server on the other; anything it drags along becomes somebody's version conflict.
+		System.Text.Json is in-box on net10, which is all the serialisation this needs.
+	-->
+
+	<ItemGroup>
+		<None Include="README.md" />
+		<None Include="docs\**\*.md" />
+	</ItemGroup>
+
+</Project>
