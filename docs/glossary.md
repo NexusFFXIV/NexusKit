@@ -18,7 +18,7 @@ Framework-provided `SettingsWindow` that renders every registered settings
 schema in a sidebar+tabs layout, plus every `IAutoSettingsSection` extension.
 Opt in via `services.AddAutoSettingsWindow()`. Replace with a custom one via
 `services.AddSettingsWindow<T>()`. See
-[NexusKit.Ui/docs/auto-settings.md](../NexusKit/NexusKit.Ui/docs/auto-settings.md).
+[NexusKit.Ui/docs/auto-settings.md](../NexusKit.Ui/docs/auto-settings.md).
 
 ### Chat-notification framework
 
@@ -27,7 +27,7 @@ overrides (enable / channel / color). Producers declare
 `NotificationKindDefinition`s; the framework hands each a `IChatNotificationPublisher`
 keyed by id; the user controls every kind in the auto-settings
 "Notifications" tab. See
-[NexusKit.ChatNotifications/README.md](../NexusKit/NexusKit.ChatNotifications/README.md).
+[NexusKit.ChatNotifications/README.md](../NexusKit.ChatNotifications/README.md).
 
 ### DbContext
 
@@ -43,7 +43,7 @@ prune, weekly VACUUM/ANALYZE). The background `DbMaintenanceService` walks
 every registered contributor on a 15-min tick and invokes those whose
 `Interval` has elapsed since their last successful run. Last-run timestamps
 persist via `MaintenanceState`. Register via `services.AddMaintenanceContributor<T>()`.
-See [NexusKit.Persistence/docs/maintenance.md](../NexusKit/NexusKit.Persistence/docs/maintenance.md).
+See [NexusKit.Persistence/docs/maintenance.md](../NexusKit.Persistence/docs/maintenance.md).
 
 ### DbMaintenanceService (`IDbMaintenanceService`)
 
@@ -66,7 +66,7 @@ characters visible during each. Bridges Dalamud's `TerritoryChanged` and the
 observation pipeline into the `encounter` + `player_encounter` tables under
 `nexus_internal_*`. Replaces the retired `observed_player.last_seen` /
 `seen_count` columns with aggregates per encounter. See
-[NexusKit.Modules.InternalData/docs/encounters.md](../NexusModules/NexusKit.Modules.InternalData/docs/encounters.md).
+[NexusKit.Modules.InternalData/docs/encounters.md](https://github.com/NexusFFXIV/NexusKit.Modules/blob/main/NexusKit.Modules.InternalData/docs/encounters.md).
 
 ### Entity Module
 
@@ -74,7 +74,7 @@ A class implementing `IEntityModule` that registers one or more tables with
 the shared `PluginDbContext`. Registered via
 `services.AddSingleton<IEntityModule, MyEntityModule>()` or the
 `services.AddEntityModule<MyEntityModule>()` shortcut. See
-[NexusKit.Persistence/docs/entity-modules.md](../NexusKit/NexusKit.Persistence/docs/entity-modules.md).
+[NexusKit.Persistence/docs/entity-modules.md](../NexusKit.Persistence/docs/entity-modules.md).
 
 ### Framework
 
@@ -104,7 +104,7 @@ Dalamud's mechanism for plugins to call each other's methods or react to each
 other's events. NexusKit wraps it behind `IIpcRegistry` so plugins can
 publish without writing Dalamud-specific code, and consume foreign IPCs with
 typed proxies. See [ipc-catalog.md](ipc-catalog.md) and
-[NexusKit.Ipc/docs/naming.md](../NexusKit/NexusKit.Ipc/docs/naming.md).
+[NexusKit.Ipc/docs/naming.md](../NexusKit.Ipc/docs/naming.md).
 
 ### IPC Consumer
 
@@ -129,7 +129,7 @@ Plugin-agnostic; never depends on a specific module.
 The `ILocalizer` implementation that aggregates every registered
 `ILocalizationSource`. Iterates them in *reverse-registration order* so
 plugin sources win over module sources, which win over framework defaults.
-See [NexusKit.Core/docs/localization.md](../NexusKit/NexusKit.Core/docs/localization.md).
+See [NexusKit.Core/docs/localization.md](../NexusKit.Core/docs/localization.md).
 
 ### Localization Source
 
@@ -154,7 +154,7 @@ by Dalamud's "Open" button on the plugin entry in `/xlplugins`.
 One forward-only schema-evolution step, implementing `IMigration`. Bundled
 into an `IMigrationModule`. Applied by `DbInitializer` only on upgrade
 installs — fresh installs baseline migrations without running them. See
-[NexusKit.Persistence/docs/migrations.md](../NexusKit/NexusKit.Persistence/docs/migrations.md).
+[NexusKit.Persistence/docs/migrations.md](../NexusKit.Persistence/docs/migrations.md).
 
 ### Notification Producer (`INotificationProducer`)
 
@@ -162,7 +162,7 @@ Marker — "this DI singleton registers one or more chat-notification kinds
 and subscribes to event sources that drive them". Mirrors the `IIpcProvider`
 pattern: resolution IS the registration side-effect. The plugin enumerates
 `IEnumerable<INotificationProducer>` at `LoadAsync` to force-construct each.
-See [NexusKit.ChatNotifications/docs/producer-guide.md](../NexusKit/NexusKit.ChatNotifications/docs/producer-guide.md).
+See [NexusKit.ChatNotifications/docs/producer-guide.md](../NexusKit.ChatNotifications/docs/producer-guide.md).
 
 ### Module
 
@@ -191,7 +191,7 @@ into the "Modules" section of the auto-settings UI.
 ### Plugin
 
 The Dalamud-side consumer of NexusKit. Today there's one:
-`PlayerNexusTracker.Plugin`. Owns its domain code (player tracking,
+`MyPlugin.Plugin`. Owns its domain code (player tracking,
 encounters, etc.) and registers any number of modules. Anything *specific
 to this plugin* belongs in the plugin project, not the framework.
 
@@ -227,7 +227,7 @@ defers to it.
 
 Pluggable "is there an active session right now?" source. The framework
 consumes this to drive the `IPluginLifetime` state machine without a direct
-Dalamud reference. The PlayerNexusTracker plugin ships
+Dalamud reference. The MyPlugin plugin ships
 `DalamudSessionStateProvider`, which adapts `IClientState.Login` /
 `IClientState.Logout`. Hosts without a session concept (tests, CLIs) skip
 the registration; lifetime then stays in `Active` permanently.

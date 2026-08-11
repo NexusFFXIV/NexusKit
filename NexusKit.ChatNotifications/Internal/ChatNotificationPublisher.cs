@@ -50,7 +50,7 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
                 Message = message,
             };
             // Sender-bearing channels reserve a "<Name>" slot — fill it with
-            // the plugin name so the row reads "<PlayerNexusTracker> body"
+            // the plugin name so the row reads "<MyPlugin> body"
             // instead of FFXIV's default empty "<>". System-style channels
             // (Echo/Notice/SystemMessage/Debug/Urgent) drop the Name silently;
             // for those Compose() already prepended the "[PluginName] " body

@@ -11,11 +11,13 @@
 
 ## Overview
 
-NexusKit gives Dalamud plugin authors a sturdy, batteries-included foundation. The seven libraries handle the recurring plumbing every non-trivial plugin needs — host composition, persistence + migrations, ImGui windows + auto-settings, IPC publishing/consuming, Lumina-backed game-data lookups, and chat notifications — so plugin code can stay focused on features.
+NexusKit gives Dalamud plugin authors a sturdy, batteries-included foundation. The eight libraries handle the recurring plumbing every non-trivial plugin needs — host composition, persistence + migrations, ImGui windows + auto-settings, IPC publishing/consuming, Lumina-backed game-data lookups, chat notifications, and the client/server sync norm — so plugin code can stay focused on features.
 
 Two architectural layering rules keep the framework reusable beyond a single plugin:
 
-1. **Dalamud-free vs. Dalamud-tied.** `Core`, `Persistence`, and `Hosting` are pure .NET libraries with no Dalamud reference. `Ui`, `Ipc`, `GameData`, and `ChatNotifications` are the Dalamud-tied bridges that wire the abstractions to Dalamud APIs.
+1. **Dalamud-free vs. Dalamud-tied.** `Core`, `Persistence`, `Hosting`, and `Sync` are pure .NET libraries with no Dalamud reference. `Ui`, `Ipc`, `GameData`, and `ChatNotifications` are the Dalamud-tied bridges that wire the abstractions to Dalamud APIs.
+
+   `Sync` takes this furthest: it has **no package references at all**, because a plugin references it on one side and a server on the other, and anything it dragged along would become somebody's version conflict.
 2. **No service-locator.** All registrations are explicit, grep-able `services.AddNexusKitXxx()` extension methods.
 
 Built on top of NexusKit: [**NexusKit.Modules**](https://github.com/NexusFFXIV/NexusKit.Modules) — reusable feature modules (player tracking, Lodestone/FFXIVCollect bridges, plugin-IPC adapters).
@@ -33,6 +35,7 @@ All packages are published to [GitHub Packages](https://github.com/orgs/NexusFFX
 | `NexusKit.Ipc` | Dalamud-tied: `IIpcRegistry`, naming-conventions, JSON-payload helpers for cross-plugin contracts. |
 | `NexusKit.GameData` | Dalamud-tied: Lumina sheet helpers, encounter/content lookups, world resolution. |
 | `NexusKit.ChatNotifications` | Dalamud-tied: pluggable chat-notification framework with its own auto-settings tab. |
+| `NexusKit.Sync` | The client/server sync norm: contract model, canonical serialisation + hashing, payload validation, version compatibility, and the `ISyncProtocol` interface. No Dalamud reference and **zero dependencies** — the server side references this same package. The REST transport that uses it lives in `NexusKit.Modules.Sync`. |
 
 ## Install
 

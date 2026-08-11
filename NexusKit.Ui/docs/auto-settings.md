@@ -204,7 +204,7 @@ Built-in sections shipped with the framework / plugin:
 | `ChatNotificationsSettingsSection` | NexusKit.ChatNotifications | One row per registered notification kind — enable / channel / color |
 | `DbMaintenanceSettingsSection` | NexusKit.Ui (via `AddDbMaintenanceSettingsSection`) | On-disk + per-table stats, last-run per contributor, "Run now" button |
 | `RefreshQueueSettingsSection` | NexusKit.Modules.PlayerEnrichment | Refresh-queue diagnostics: pending count, per-category breakdown, drain ETA |
-| `PlayerFilterSettingsSection` | PlayerNexusTracker.Plugin | User-defined player-list filters editor |
+| `WidgetSettingsSection` | MyPlugin.Plugin | User-defined player-list filters editor |
 
 Plugin-domain sections (e.g. a custom encounter list, a tag editor) follow
 the same shape: one new singleton registered against `IAutoSettingsSection`,

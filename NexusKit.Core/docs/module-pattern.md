@@ -29,7 +29,7 @@ Filled once by the plugin's `LoadAsync` and registered as a singleton:
 
 ```csharp
 var ctx = new PluginContext(
-    PluginName: nameof(PlayerNexusTracker),
+    PluginName: nameof(MyPlugin),
     ConfigDirectory: PluginInterface.GetPluginConfigDirectory(),
     PluginVersion: typeof(Plugin).Assembly.GetName().Version!);
 

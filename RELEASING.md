@@ -2,7 +2,11 @@
 
 NexusKit follows [Semantic Versioning](https://semver.org/). Versions are derived from git tags via [MinVer](https://github.com/adamralph/minver) — at pack time, MinVer reads the nearest reachable `v*.*.*` tag and stamps the package version from it.
 
-All 7 packages in this repo ship with the **same version** (synchronous release strategy). That fits the framework's tight internal coupling — there is no scenario where, say, `NexusKit.Core` 0.2.0 is meant to be consumed with `NexusKit.Hosting` 0.1.0.
+All 8 packages in this repo ship with the **same version** (synchronous release strategy). That fits the framework's tight internal coupling — there is no scenario where, say, `NexusKit.Core` 0.2.0 is meant to be consumed with `NexusKit.Hosting` 0.1.0.
+
+> **`NexusKit.Sync` is the one package where the version number means less than it looks like.** It carries the wire protocol, and synchronous versioning means it gets a new number whenever anything else in this repo ships — including releases that do not touch it. Worse, a breaking change in, say, `NexusKit.Ui` bumps the major everywhere, so `NexusKit.Sync` can appear to break when the protocol did not move at all.
+>
+> The authority on protocol compatibility is `SyncProtocolVersion.Current` inside the package, not the package version. When you do change the wire surface, say so explicitly in the release notes — nobody can read it off the version.
 
 > **Never add a `<Version>` to a csproj here.** MinVer deriving the version from the tag is what makes tag and package version impossible to desynchronise. PlayerNexusTracker had a hardcoded version instead and shipped a release whose assembly version did not match its tag, which made the release invisible to existing users. If you find yourself wanting to pin a version, that is a signal something else is wrong.
 
