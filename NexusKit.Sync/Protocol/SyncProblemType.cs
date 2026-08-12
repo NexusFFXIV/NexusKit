@@ -16,6 +16,15 @@ public static class SyncProblemType
     /// <summary>No contract with that id and major version is registered here.</summary>
     public const string UnknownContract = Prefix + "unknown-contract";
 
+    /// <summary>
+    /// The peer's version is below the lowest this server still serves. Distinct from
+    /// <see cref="ContractMismatch"/> because the remedy is different and only the peer can apply
+    /// it: no renegotiation will help, the build itself has to be updated. Carries the minimum in
+    /// the problem's extensions so a peer can say so once, loudly, instead of failing every call
+    /// with a message nobody reads.
+    /// </summary>
+    public const string ContractTooOld = Prefix + "contract-too-old";
+
     /// <summary>The contract exists, but not the named collection.</summary>
     public const string UnknownCollection = Prefix + "unknown-collection";
 
