@@ -4,9 +4,11 @@ namespace NexusKit.Sync.Protocol;
 
 /// <summary>
 /// What a server publishes about a contract it has registered.
-/// <para>Readable without authentication. That is deliberate: a contract document declares
-/// shapes and constraints, not data, and being able to fetch one before holding a key is what
-/// lets an author check compatibility, generate code, or simply see what a server speaks.</para>
+/// <para>Requires the built-in <c>contract:pull</c> scope. A contract document declares shapes and
+/// constraints rather than data, but it also declares everything a server speaks, and a server
+/// should not describe what it holds to anyone who asks. A key granted the scope is a statement that
+/// this client may follow the server's schema — which is what lets it check compatibility, generate
+/// code, or pick the newest version it can honour.</para>
 /// </summary>
 /// <param name="ContractId">The contract's identity.</param>
 /// <param name="AvailableVersions">Every version registered here, ascending.</param>

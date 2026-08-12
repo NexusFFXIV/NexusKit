@@ -55,6 +55,32 @@ public static class PayloadValidator
         return ValidationResult.From(problems);
     }
 
+    /// <summary>
+    /// Validates a single value against a single field declaration.
+    /// <para>Exists for callers holding one field and one value rather than a whole record — the
+    /// caller that asks "would this stored value survive a narrowing conversion?". Those cannot use
+    /// <see cref="Validate"/>, because it rejects properties the collection does not declare, so a
+    /// stand-in collection holding only the field under test would report every <i>other</i>
+    /// property of the record as an error.</para>
+    /// <para>This adds no rule and relaxes none: it is the same per-type check
+    /// <see cref="Validate"/> performs, reached directly. A JSON <c>null</c> is a problem here
+    /// rather than an absence, because a caller passing one value has already decided the value is
+    /// present — <see cref="Validate"/> keeps owning the missing-versus-null distinction, which
+    /// only a whole record can answer.</para>
+    /// </summary>
+    /// <param name="field">The declaration the value must satisfy.</param>
+    /// <param name="value">The value, as it appears in the payload.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="field"/> is null.</exception>
+    public static ValidationResult ValidateField(FieldDefinition field, JsonElement value)
+    {
+        ArgumentNullException.ThrowIfNull(field);
+
+        var problems = new List<ValidationProblem>();
+        ValidateValue(field, value, problems);
+
+        return ValidationResult.From(problems);
+    }
+
     private static void ValidateValue(FieldDefinition field, JsonElement value, List<ValidationProblem> problems)
     {
         switch (field.Type)
