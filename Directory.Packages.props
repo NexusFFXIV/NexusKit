@@ -31,7 +31,7 @@
     <!-- Native SQLite binary, promoted transitive→direct in NexusKit.Persistence
          to escape GHSA-2m69-gcr7-jv3q; see the comment at the reference site. -->
     <PackageVersion Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
-    <PackageVersion Include="MinVer" Version="7.0.0" />
+    <PackageVersion Include="MinVer" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
