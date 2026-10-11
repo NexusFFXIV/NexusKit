@@ -66,6 +66,14 @@ internal sealed class ChatNotificationsSettingsSection : IAutoSettingsSection
             policy.DigestMode = (NotificationDigestMode)Math.Clamp(digest, 0, digestLabels.Length - 1);
             policyChanged = true;
         }
+        if (mRegistry.DigestCount > 0)
+        {
+            ImGui.SameLine();
+            ImGui.TextDisabled($"({mRegistry.DigestCount})");
+            ImGui.SameLine();
+            if (ImGui.Button(mLoc.Get("nexuskit.chatnotifications.flush_digest")))
+                mRegistry.FlushDigest();
+        }
 
         var kinds = mRegistry.Registered;
         if (kinds.Count == 0)
