@@ -87,4 +87,5 @@ public sealed record NotificationDigestItem(
     string Kind,
     ulong ContentId,
     DateTime CreatedAtUtc,
-    string Message);
+    string Message,
+    string? EventId = null);

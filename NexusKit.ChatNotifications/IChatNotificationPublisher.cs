@@ -22,6 +22,8 @@ public interface IChatNotificationPublisher
     /// <summary>Send a chat line for this kind. <paramref name="body"/> is the
     /// producer-supplied message content; the framework handles plugin prefix
     /// and color. No-op when the kind is disabled or routed to
-    /// <see cref="NotificationChannel.None"/>.</summary>
-    void Publish(SeString body);
+    /// <see cref="NotificationChannel.None"/>. ContentId and EventId are
+    /// optional domain identifiers used by the central deduplication policy.
+    /// </summary>
+    void Publish(SeString body, ulong contentId = 0, string? eventId = null);
 }
