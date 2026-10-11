@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 namespace NexusKit.GameData.ObjectTables;
 
 /// <summary>
-/// Hooks <c>AgentInspect.ReceiveSearchComment</c> — the function the game calls
-/// when the server answers an Examine with the target's search comment — and
-/// republishes it keyed on ContentId.
+/// Hooks <c>AgentInspect.ReceiveSearchComment</c> and observes the
+/// <c>AgentCharaCard</c> storage — the two game paths that expose a character's
+/// search comment — and republishes it keyed on ContentId.
 /// <para>Read-only by construction: the detour calls the original first and then
 /// only reads its arguments. Nothing here sends a request, so the watcher can
 /// never produce traffic the user didn't trigger by examining someone.</para>
@@ -20,18 +20,23 @@ namespace NexusKit.GameData.ObjectTables;
 internal sealed unsafe class InspectSearchCommentWatcher : IInspectSearchCommentWatcher, IDisposable
 {
     private readonly IObjectTable mObjectTable;
+    private readonly IFramework mFramework;
     private readonly ILogger<InspectSearchCommentWatcher> mLog;
     private readonly Hook<AgentInspect.Delegates.ReceiveSearchComment>? mHook;
     private bool mDisposed;
+    private ulong mLastPlateContentId;
+    private string? mLastPlateComment;
 
     public event Action<ulong, string?>? SearchCommentReceived;
 
     public InspectSearchCommentWatcher(
         IGameInteropProvider interop,
         IObjectTable objectTable,
+        IFramework framework,
         ILogger<InspectSearchCommentWatcher> log)
     {
         mObjectTable = objectTable;
+        mFramework = framework;
         mLog = log;
 
         // A failed hook must not take the plugin down with it — the rest of the
@@ -47,13 +52,48 @@ internal sealed unsafe class InspectSearchCommentWatcher : IInspectSearchComment
         {
             mLog.LogWarning(ex, "Search-comment hook could not be installed; search comments stay unavailable.");
         }
+
+        // Adventurer Plates expose the same search comment through AgentCharaCard
+        // instead of AgentInspect. Polling the already-populated agent avoids a
+        // second request and catches plates opened from any in-game window.
+        mFramework.Update += OnFrameworkUpdate;
     }
 
     public void Dispose()
     {
         if (mDisposed) return;
         mDisposed = true;
+        mFramework.Update -= OnFrameworkUpdate;
         mHook?.Dispose();
+    }
+
+    private void OnFrameworkUpdate(IFramework _)
+    {
+        try
+        {
+            var module = AgentModule.Instance();
+            var agent = module == null ? null : module->GetAgentByInternalId(AgentId.CharaCard);
+            var data = agent == null ? null : ((AgentCharaCard*)agent)->Data;
+            if (agent == null || !agent->IsAgentActive() || data == null)
+            {
+                mLastPlateContentId = 0;
+                mLastPlateComment = null;
+                return;
+            }
+
+            var contentId = data->ContentId;
+            if (contentId == 0) return;
+            var comment = ReadUtf8(data->SearchComment.StringPtr);
+            if (contentId == mLastPlateContentId && string.Equals(comment, mLastPlateComment, StringComparison.Ordinal)) return;
+
+            mLastPlateContentId = contentId;
+            mLastPlateComment = comment;
+            SearchCommentReceived?.Invoke(contentId, comment);
+        }
+        catch (Exception ex)
+        {
+            mLog.LogDebug(ex, "Search-comment adventurer plate read failed");
+        }
     }
 
     private void Detour(AgentInspect* thisPtr, uint entityId, byte* searchComment)
