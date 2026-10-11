@@ -120,6 +120,7 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry, IDis
 
     public void Dispose()
     {
+        FlushDigestToChat();
         if (mSession is not null) mSession.Deactivated -= FlushDigestToChat;
     }
 }
