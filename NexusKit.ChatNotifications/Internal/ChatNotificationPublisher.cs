@@ -19,6 +19,7 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
     private readonly IChatGui mChat;
     private readonly ILogger mLog;
     private readonly NotificationHistoryStore mHistory;
+    private readonly NotificationDigestBuffer mDigest;
 
     public NotificationKindDefinition Kind { get; }
 
@@ -28,7 +29,8 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
         IPluginContext context,
         IChatGui chat,
         ILogger log,
-        NotificationHistoryStore history)
+        NotificationHistoryStore history,
+        NotificationDigestBuffer digest)
     {
         Kind = kind;
         mOwner = owner;
@@ -36,6 +38,7 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
         mChat = chat;
         mLog = log;
         mHistory = history;
+        mDigest = digest;
     }
 
     public void Publish(SeString body)
@@ -44,6 +47,14 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
         {
             var (enabled, channel, color) = Resolve();
             if (!enabled || channel == NotificationChannel.None) return;
+            var decision = NotificationPolicy.Decide(mOwner.Settings.Policy,
+                TimeOnly.FromDateTime(DateTime.Now));
+            if (decision.Delivery == NotificationDelivery.Digest)
+            {
+                mDigest.Add(new NotificationDigestItem(Kind.Id, 0, DateTime.UtcNow, body.TextValue));
+                mHistory.Add(Kind.Id, body.TextValue);
+                return;
+            }
 
             var hasSender = ChatChannelMap.HasSenderSlot(channel);
             var message = Compose(body, color, includeBodyPrefix: !hasSender);

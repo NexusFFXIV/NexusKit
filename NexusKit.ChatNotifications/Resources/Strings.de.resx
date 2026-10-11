@@ -69,4 +69,5 @@
     <data name="nexuskit.chatnotifications.color.grey"><value>Grau</value></data>
     <data name="nexuskit.chatnotifications.quiet_hours"><value>Ruhezeiten</value></data>
     <data name="nexuskit.chatnotifications.digest_mode"><value>Digest-Modus</value></data>
+    <data name="nexuskit.chatnotifications.flush_digest"><value>Digest leeren</value></data>
 </root>
