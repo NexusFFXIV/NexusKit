@@ -20,6 +20,8 @@ public static class ChatNotificationsServiceCollectionExtensions
     {
         services.AddSingleton<ChatNotificationRegistry>();
         services.AddSingleton<NotificationHistoryStore>();
+        // The registry and every publisher share the same bounded digest.
+        services.AddSingleton<NotificationDigestBuffer>();
         services.AddSingleton<IChatNotificationRegistry>(sp => sp.GetRequiredService<ChatNotificationRegistry>());
         services.AddSingleton<IAutoSettingsSection, ChatNotificationsSettingsSection>();
         services.AddResourceLocalizer<Strings>();
