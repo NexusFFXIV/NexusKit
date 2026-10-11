@@ -47,10 +47,31 @@ internal sealed class ChatNotificationsSettingsSection : IAutoSettingsSection
 
     public void Render(ISettingsStore store)
     {
+        var policy = mRegistry.Settings.Policy;
+        var policyChanged = false;
+        var quiet = policy.QuietHoursEnabled;
+        if (ImGui.Checkbox(mLoc.Get("nexuskit.chatnotifications.quiet_hours"), ref quiet))
+        {
+            policy.QuietHoursEnabled = quiet;
+            policyChanged = true;
+        }
+        ImGui.SameLine();
+        ImGui.TextDisabled($"({policy.QuietHoursStart:HH\\:mm}–{policy.QuietHoursEnd:HH\\:mm})");
+        var digest = (int)policy.DigestMode;
+        var digestLabels = Enum.GetValues<NotificationDigestMode>()
+            .Select(x => x.ToString()).ToArray();
+        if (ImGui.Combo(mLoc.Get("nexuskit.chatnotifications.digest_mode"), ref digest,
+            digestLabels, digestLabels.Length))
+        {
+            policy.DigestMode = (NotificationDigestMode)Math.Clamp(digest, 0, digestLabels.Length - 1);
+            policyChanged = true;
+        }
+
         var kinds = mRegistry.Registered;
         if (kinds.Count == 0)
         {
             ImGui.TextDisabled(mLoc.Get("nexuskit.chatnotifications.empty"));
+            if (policyChanged) _ = mRegistry.PersistAsync();
             return;
         }
 
@@ -121,7 +142,7 @@ internal sealed class ChatNotificationsSettingsSection : IAutoSettingsSection
             defaultOpen: true,
             showHeader: false);
 
-        if (changed) _ = mRegistry.PersistAsync();
+        if (changed || policyChanged) _ = mRegistry.PersistAsync();
     }
 
     /// <summary>Column 0 — enable checkbox + label. Label is the checkbox's
