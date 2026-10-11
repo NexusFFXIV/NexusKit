@@ -1,9 +1,24 @@
 using Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace NexusKit.ChatNotifications.Tests;
 
 public sealed class NotificationPolicyTests
 {
+    [Fact]
+    public void ChatNotifications_RegisterSharedDigestBuffer()
+    {
+        var services = new ServiceCollection();
+
+        services.AddNexusKitChatNotifications();
+
+        var registration = services.SingleOrDefault(
+            x => x.ServiceType == typeof(NotificationDigestBuffer));
+
+        Assert.NotNull(registration);
+        Assert.Equal(ServiceLifetime.Singleton, registration!.Lifetime);
+    }
+
     [Fact]
     public void DisabledQuietHours_StaysImmediate()
     {
