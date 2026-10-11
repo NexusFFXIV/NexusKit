@@ -2,6 +2,7 @@ using System.Net.Http;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Plugin.Services;
 using Microsoft.Extensions.Logging;
+using NexusKit.Core;
 
 namespace NexusKit.Ui.Imaging;
 
@@ -10,14 +11,19 @@ internal sealed class ImageCache : IImageCache, IDisposable
     private readonly ITextureProvider mTextures;
     private readonly ILogger<ImageCache> mLog;
     private readonly HttpClient mHttp;
+    private readonly CancellationTokenSource mStopCts;
+    private readonly IPluginLifetime mLifetime;
     private readonly Dictionary<string, CacheEntry> mEntries = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<Task> mLoads = new();
     private readonly object mLock = new();
     private bool mDisposed;
 
-    public ImageCache(ITextureProvider textures, ILogger<ImageCache> log)
+    public ImageCache(ITextureProvider textures, ILogger<ImageCache> log, IPluginLifetime lifetime)
     {
         mTextures = textures;
         mLog = log;
+        mLifetime = lifetime;
+        mStopCts = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Stopping);
         mHttp = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
         // Lodestone's CDN serves a generic body to non-browser UAs — hint a normal client.
         mHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
@@ -30,21 +36,23 @@ internal sealed class ImageCache : IImageCache, IDisposable
 
         lock (mLock)
         {
+            if (mDisposed || mLifetime.IsStopping) return null;
             if (mEntries.TryGetValue(url, out var existing)) return existing.Texture;
 
             // Mark in-flight so concurrent GetTexture calls don't re-start the fetch.
             mEntries[url] = new CacheEntry();
+            var load = LoadAsync(url, mStopCts.Token);
+            mLoads.Add(load);
         }
-
-        _ = LoadAsync(url);
         return null;
     }
 
-    private async Task LoadAsync(string url)
+    private async Task LoadAsync(string url, CancellationToken ct)
     {
         try
         {
-            var bytes = await mHttp.GetByteArrayAsync(url).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
+            var bytes = await mHttp.GetByteArrayAsync(url, ct).ConfigureAwait(false);
             var wrap = await mTextures.CreateFromImageAsync(bytes).ConfigureAwait(false);
 
             lock (mLock)
@@ -58,6 +66,7 @@ internal sealed class ImageCache : IImageCache, IDisposable
                     entry.Texture = wrap;
             }
         }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
         catch (Exception ex)
         {
             // Permanent failure for this URL — leave the entry without a texture so we
@@ -68,14 +77,25 @@ internal sealed class ImageCache : IImageCache, IDisposable
 
     public void Dispose()
     {
+        Task[] loads;
         lock (mLock)
         {
             if (mDisposed) return;
             mDisposed = true;
+            mStopCts.Cancel();
+            loads = mLoads.ToArray();
+        }
+
+        try { Task.WhenAll(loads).GetAwaiter().GetResult(); }
+        catch (Exception ex) { mLog.LogDebug(ex, "ImageCache: shutdown wait failed."); }
+
+        lock (mLock)
+        {
             foreach (var entry in mEntries.Values)
                 entry.Texture?.Dispose();
             mEntries.Clear();
         }
+        mStopCts.Dispose();
         mHttp.Dispose();
     }
 
