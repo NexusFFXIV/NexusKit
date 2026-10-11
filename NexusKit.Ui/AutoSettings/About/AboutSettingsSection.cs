@@ -65,8 +65,26 @@ public sealed class AboutSettingsSection : IAutoSettingsSection
         ImGui.Separator();
         ImGui.Spacing();
         ImGui.TextDisabled(mLocalizer.Get(mOptions.ReleaseNotesKey));
-        foreach (var key in mOptions.NoteKeys)
-            ImGui.BulletText(mLocalizer.Get(key));
+        if (mOptions.ReleaseEntries.Count > 0)
+        {
+            var entryCount = Math.Min(5, mOptions.ReleaseEntries.Count);
+            for (var i = 0; i < entryCount; i++)
+            {
+                var entry = mOptions.ReleaseEntries[i];
+                if (!ImGui.CollapsingHeader(
+                        $"{mLocalizer.Get(entry.VersionKey)}##about_release_{i}",
+                        i == 0 ? ImGuiTreeNodeFlags.DefaultOpen : ImGuiTreeNodeFlags.None))
+                    continue;
+
+                foreach (var key in entry.NoteKeys)
+                    ImGui.BulletText(mLocalizer.Get(key));
+            }
+        }
+        else
+        {
+            foreach (var key in mOptions.NoteKeys)
+                ImGui.BulletText(mLocalizer.Get(key));
+        }
     }
 
     private string ReadKey
