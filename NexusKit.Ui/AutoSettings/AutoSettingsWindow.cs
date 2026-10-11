@@ -17,17 +17,20 @@ public sealed class AutoSettingsWindow : SettingsWindow
     private readonly ISettingsStore mStore;
     private readonly ILocalizer mLocalizer;
     private readonly IReadOnlyList<IAutoSettingsSection> mSections;
+    private readonly IReadOnlyList<ISettingsChangeObserver> mChangeObservers;
     private readonly Dictionary<Type, object> mValues = new();
     private bool mInitialized;
     private string? mCurrentNavId;
 
     public AutoSettingsWindow(IPluginContext ctx, ISettingsSchemaProvider schemas, ISettingsStore store,
-                              ILocalizer localizer, IEnumerable<IAutoSettingsSection> sections)
+                              ILocalizer localizer, IEnumerable<IAutoSettingsSection> sections,
+                              IEnumerable<ISettingsChangeObserver> changeObservers)
         : base($"{ctx.PluginName} Settings###{ctx.PluginName}_AutoSettings", store, restoreOpenState: false)
     {
         mSchemas = schemas;
         mStore = store;
         mLocalizer = localizer;
+        mChangeObservers = changeObservers.ToList();
         // Materialize once at ctor — DI hands us a fresh enumerable; we want a
         // stable, ordered list for nav rendering. Order is the section's own
         // self-declared sort key; ties break by NavTitleKey for determinism.
@@ -236,6 +239,8 @@ public sealed class AutoSettingsWindow : SettingsWindow
             if (prop.ResolveKind() == ControlKind.Hidden) continue;
             if (SettingsControlRenderer.Render(prop, instance, mLocalizer))
             {
+                foreach (var observer in mChangeObservers)
+                    observer.OnChanged(instance, prop.Name);
                 _ = schema.SaveAsync(mStore, instance);
             }
         }
