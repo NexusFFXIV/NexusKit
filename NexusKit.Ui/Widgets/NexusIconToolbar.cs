@@ -67,7 +67,9 @@ public static class NexusIconToolbar
         for (var i = 0; i < slots.Count; i++)
             totalWidth += slots[i].Width + (i > 0 ? spacing : 0f);
 
-        var avail = ImGui.GetContentRegionAvail().X;
+        var avail = ImGui.TableGetColumnIndex() >= 0
+            ? ImGui.GetColumnWidth()
+            : ImGui.GetContentRegionAvail().X;
         if (totalWidth <= avail)
         {
             ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
