@@ -67,8 +67,11 @@ public static class NexusIconToolbar
         for (var i = 0; i < slots.Count; i++)
             totalWidth += slots[i].Width + (i > 0 ? spacing : 0f);
 
-        var avail = ImGui.GetContentRegionAvail().X;
-        ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
+        // Use the window's absolute content edge. GetContentRegionAvail is
+        // relative to the current cursor and double-counts that offset when
+        // the toolbar is drawn inside a right-side BeginGroup panel.
+        var rightEdge = ImGui.GetWindowContentRegionMax().X;
+        ImGui.SameLine(rightEdge - totalWidth);
 
         for (var i = 0; i < slots.Count; i++)
         {
