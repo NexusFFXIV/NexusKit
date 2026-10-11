@@ -1,5 +1,9 @@
 using Dalamud.Plugin.Services;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Microsoft.Extensions.Logging;
+using NexusKit.Core;
 using NexusKit.Core.Context;
 using NexusKit.Persistence.Settings;
 
@@ -12,7 +16,7 @@ namespace NexusKit.ChatNotifications.Internal;
 /// <see cref="PersistAsync"/> to write back; publishers read from the cached
 /// object on every <c>Publish</c> with no DB hit.
 /// </summary>
-internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
+internal sealed class ChatNotificationRegistry : IChatNotificationRegistry, IDisposable
 {
     private readonly IPluginContext mContext;
     private readonly ISettingsStore mStore;
@@ -20,6 +24,7 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
     private readonly ILogger<ChatNotificationRegistry> mLog;
     private readonly NotificationHistoryStore mHistory;
     private readonly NotificationDigestBuffer mDigest;
+    private readonly ISessionStateProvider? mSession;
     private readonly List<NotificationKindDefinition> mRegistered = new();
     private readonly Dictionary<string, ChatNotificationPublisher> mPublishers = new();
     private ChatNotificationSettings mSettings = new();
@@ -30,7 +35,8 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
         IChatGui chat,
         ILogger<ChatNotificationRegistry> log,
         NotificationHistoryStore history,
-        NotificationDigestBuffer digest)
+        NotificationDigestBuffer digest,
+        ISessionStateProvider? session = null)
     {
         mContext = context;
         mStore = store;
@@ -38,6 +44,8 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
         mLog = log;
         mHistory = history;
         mDigest = digest;
+        mSession = session;
+        if (mSession is not null) mSession.Deactivated += FlushDigestToChat;
         _ = LoadAsync();
     }
 
@@ -51,6 +59,27 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
 
     public int DigestCount => mDigest.Count;
     public IReadOnlyList<NotificationDigestItem> FlushDigest() => mDigest.Flush();
+
+    /// <summary>Delivers queued digest items when the active session ends.
+    /// A single summary keeps the chat readable even when many events were
+    /// queued during the session.</summary>
+    public void FlushDigestToChat()
+    {
+        var items = mDigest.Flush();
+        if (items.Count == 0) return;
+        try
+        {
+            var message = new SeStringBuilder()
+                .AddText($"[NexusKit] {items.Count} notification(s) while away: ")
+                .AddText(string.Join(" | ", items.Select(x => x.Message)))
+                .Build();
+            mChat.Print(new XivChatEntry { Type = XivChatType.Echo, Message = message });
+        }
+        catch (Exception ex)
+        {
+            mLog.LogWarning(ex, "ChatNotifications: digest flush failed");
+        }
+    }
 
     public IChatNotificationPublisher RegisterKind(NotificationKindDefinition kind)
     {
@@ -87,5 +116,10 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
         {
             mLog.LogWarning(ex, "ChatNotifications: settings load failed; using defaults");
         }
+    }
+
+    public void Dispose()
+    {
+        if (mSession is not null) mSession.Deactivated -= FlushDigestToChat;
     }
 }
