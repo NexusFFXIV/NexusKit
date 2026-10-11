@@ -24,6 +24,7 @@ internal sealed class ImageCache : IImageCache, IDisposable
         mLog = log;
         mLifetime = lifetime;
         mStopCts = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Stopping);
+        mLifetime.StateChanged += OnLifecycleChanged;
         mHttp = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
         // Lodestone's CDN serves a generic body to non-browser UAs — hint a normal client.
         mHttp.DefaultRequestHeaders.UserAgent.ParseAdd(
@@ -75,19 +76,31 @@ internal sealed class ImageCache : IImageCache, IDisposable
         }
     }
 
+    private void OnLifecycleChanged(PluginLifecycleState state)
+    {
+        if (state == PluginLifecycleState.Stopping)
+            StopLoads();
+    }
+
+    private void StopLoads()
+    {
+        try { mStopCts.Cancel(); } catch (ObjectDisposedException) { }
+        Task[] loads;
+        lock (mLock) loads = mLoads.ToArray();
+        try { Task.WhenAll(loads).GetAwaiter().GetResult(); }
+        catch (Exception ex) { mLog.LogDebug(ex, "ImageCache: shutdown wait failed."); }
+    }
+
     public void Dispose()
     {
-        Task[] loads;
+        mLifetime.StateChanged -= OnLifecycleChanged;
         lock (mLock)
         {
             if (mDisposed) return;
             mDisposed = true;
             mStopCts.Cancel();
-            loads = mLoads.ToArray();
         }
-
-        try { Task.WhenAll(loads).GetAwaiter().GetResult(); }
-        catch (Exception ex) { mLog.LogDebug(ex, "ImageCache: shutdown wait failed."); }
+        StopLoads();
 
         lock (mLock)
         {
