@@ -16,5 +16,9 @@ public sealed class AboutPageOptions
     public required string ReleaseNotesKey { get; init; }
     public required string RepositoryUrl { get; init; }
     public IReadOnlyList<string> NoteKeys { get; init; } = Array.Empty<string>();
+    /// <summary>Release groups in newest-first order; the About page displays
+    /// at most the first five groups.</summary>
+    public IReadOnlyList<AboutReleaseEntry> ReleaseEntries { get; init; }
+        = Array.Empty<AboutReleaseEntry>();
     public int Order { get; init; } = 300;
 }

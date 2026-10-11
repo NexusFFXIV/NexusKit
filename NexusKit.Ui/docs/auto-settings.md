@@ -232,6 +232,11 @@ services.AddAboutSettingsSection(new AboutPageOptions
 });
 ```
 
+For grouped release history, provide `ReleaseEntries` with one localized
+version key and a list of localized note keys per entry. When entries are
+provided they replace the flat `NoteKeys` list; the first group is expanded by
+default and the remaining groups can be opened on demand.
+
 The plugin owns the localized resource keys. NexusKit stores the read marker
 under the plugin name and version, so every new version is shown as unread once.
 
