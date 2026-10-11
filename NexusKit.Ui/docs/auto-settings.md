@@ -204,11 +204,36 @@ Built-in sections shipped with the framework / plugin:
 | `ChatNotificationsSettingsSection` | NexusKit.ChatNotifications | One row per registered notification kind — enable / channel / color |
 | `DbMaintenanceSettingsSection` | NexusKit.Ui (via `AddDbMaintenanceSettingsSection`) | On-disk + per-table stats, last-run per contributor, "Run now" button |
 | `RefreshQueueSettingsSection` | NexusKit.Modules.PlayerEnrichment | Refresh-queue diagnostics: pending count, per-category breakdown, drain ETA |
+| `AboutSettingsSection` | NexusKit.Ui (via `AddAboutSettingsSection`) | Reusable About/release-notes page with repository link and per-version read marker |
 | `WidgetSettingsSection` | MyPlugin.Plugin | User-defined player-list filters editor |
 
 Plugin-domain sections (e.g. a custom encounter list, a tag editor) follow
 the same shape: one new singleton registered against `IAutoSettingsSection`,
 no edits to `AutoSettingsWindow`.
+
+### Reusable About / Changelog page
+
+Plugins can opt in without implementing their own read-state persistence:
+
+```csharp
+services.AddAboutSettingsSection(new AboutPageOptions
+{
+    NavTitleKey = "about.nav",
+    TitleKey = "about.title",
+    VersionKey = "about.version",
+    DescriptionKey = "about.description",
+    StatusReadKey = "about.status.read",
+    StatusUnreadKey = "about.status.unread",
+    MarkReadKey = "about.mark_read",
+    RepositoryKey = "about.repository",
+    ReleaseNotesKey = "about.release_notes",
+    RepositoryUrl = "https://github.com/example/plugin",
+    NoteKeys = ["about.note.first"],
+});
+```
+
+The plugin owns the localized resource keys. NexusKit stores the read marker
+under the plugin name and version, so every new version is shown as unread once.
 
 ---
 
