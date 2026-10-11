@@ -66,4 +66,31 @@ public sealed class NotificationPolicyTests
         Assert.False(decision.IsQuietHours);
         Assert.Equal(NotificationDelivery.Immediate, decision.Delivery);
     }
+
+    [Fact]
+    public void DigestBuffer_FlushesInFifoOrder()
+    {
+        var buffer = new NotificationDigestBuffer();
+        buffer.Add(new("first", 0, DateTime.UtcNow, "one"));
+        buffer.Add(new("second", 0, DateTime.UtcNow, "two"));
+
+        var flushed = buffer.Flush();
+
+        Assert.Equal(new[] { "one", "two" }, flushed.Select(x => x.Message));
+        Assert.Equal(0, buffer.Count);
+    }
+
+    [Fact]
+    public void DigestBuffer_DropsOldestAtBound()
+    {
+        var buffer = new NotificationDigestBuffer();
+        for (var i = 0; i < 101; i++)
+            buffer.Add(new("kind", 0, DateTime.UtcNow, i.ToString()));
+
+        var flushed = buffer.Flush();
+
+        Assert.Equal(100, flushed.Count);
+        Assert.Equal("1", flushed[0].Message);
+        Assert.Equal("100", flushed[^1].Message);
+    }
 }
