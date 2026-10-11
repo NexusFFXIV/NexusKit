@@ -67,4 +67,6 @@
     <data name="nexuskit.chatnotifications.color.blue"><value>Blue</value></data>
     <data name="nexuskit.chatnotifications.color.cyan"><value>Cyan</value></data>
     <data name="nexuskit.chatnotifications.color.grey"><value>Grey</value></data>
+    <data name="nexuskit.chatnotifications.quiet_hours"><value>Quiet hours</value></data>
+    <data name="nexuskit.chatnotifications.digest_mode"><value>Digest mode</value></data>
 </root>
