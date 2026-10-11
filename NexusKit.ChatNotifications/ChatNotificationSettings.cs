@@ -16,6 +16,10 @@ public sealed class ChatNotificationSettings
     public const string StoreKey = "nexuskit.chat_notifications";
 
     public Dictionary<string, ChatNotificationKindSetting> Overrides { get; set; } = new();
+
+    /// <summary>Global delivery policy. Existing settings files deserialize
+    /// with immediate delivery and quiet hours disabled.</summary>
+    public NotificationPolicySettings Policy { get; set; } = new();
 }
 
 /// <summary>Per-kind user overrides. Sensitive defaults live on the
