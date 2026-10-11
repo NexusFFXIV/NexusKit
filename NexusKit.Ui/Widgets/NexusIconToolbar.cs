@@ -67,16 +67,33 @@ public static class NexusIconToolbar
         for (var i = 0; i < slots.Count; i++)
             totalWidth += slots[i].Width + (i > 0 ? spacing : 0f);
 
-        // Use the window's absolute content edge. GetContentRegionAvail is
-        // relative to the current cursor and double-counts that offset when
-        // the toolbar is drawn inside a right-side BeginGroup panel.
-        var rightEdge = ImGui.GetWindowContentRegionMax().X;
-        ImGui.SameLine(rightEdge - totalWidth);
+        var avail = ImGui.GetContentRegionAvail().X;
+        if (totalWidth <= avail)
+        {
+            ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
+            for (var i = 0; i < slots.Count; i++)
+            {
+                if (i > 0) ImGui.SameLine();
+                slots[i].Draw();
+            }
+            return;
+        }
 
+        // A narrow header action column must wrap instead of clipping the
+        // buttons outside its table cell.
+        var rowWidth = 0f;
         for (var i = 0; i < slots.Count; i++)
         {
-            if (i > 0) ImGui.SameLine();
+            var width = slots[i].Width;
+            if (rowWidth > 0f && rowWidth + spacing + width > avail)
+            {
+                ImGui.NewLine();
+                rowWidth = 0f;
+            }
+
+            if (rowWidth > 0f) ImGui.SameLine();
             slots[i].Draw();
+            rowWidth += width + (rowWidth > 0f ? spacing : 0f);
         }
     }
 
