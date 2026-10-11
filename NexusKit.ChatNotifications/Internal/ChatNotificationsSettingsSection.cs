@@ -72,7 +72,7 @@ internal sealed class ChatNotificationsSettingsSection : IAutoSettingsSection
             ImGui.TextDisabled($"({mRegistry.DigestCount})");
             ImGui.SameLine();
             if (ImGui.Button(mLoc.Get("nexuskit.chatnotifications.flush_digest")))
-                mRegistry.FlushDigest();
+                mRegistry.FlushDigestToChat();
         }
 
         var kinds = mRegistry.Registered;
