@@ -54,6 +54,9 @@ jobs:
       - name: Build
         run: dotnet build NexusKit.sln -c Release --no-restore
 
+      - name: Run chat notification tests
+        run: dotnet test tests/NexusKit.ChatNotifications.Tests/NexusKit.ChatNotifications.Tests.csproj -c Release --no-restore
+
       - name: Pack
         if: startsWith(github.ref, 'refs/tags/v')
         run: dotnet pack NexusKit.sln -c Release --no-build -o ./artifacts
