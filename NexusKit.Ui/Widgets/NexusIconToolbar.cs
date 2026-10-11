@@ -67,10 +67,14 @@ public static class NexusIconToolbar
         for (var i = 0; i < slots.Count; i++)
             totalWidth += slots[i].Width + (i > 0 ? spacing : 0f);
 
-        var avail = ImGui.TableGetColumnIndex() >= 0
+        var inTable = ImGui.TableGetColumnIndex() >= 0;
+        var avail = inTable
             ? ImGui.GetColumnWidth()
             : ImGui.GetContentRegionAvail().X;
-        if (totalWidth <= avail)
+        // Absolute SameLine positions are relative to the host window and can
+        // escape a table cell's clip rect. In tables, draw from the cell's
+        // current cursor and use the wrapping path below.
+        if (!inTable && totalWidth <= avail)
         {
             ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
             for (var i = 0; i < slots.Count; i++)
