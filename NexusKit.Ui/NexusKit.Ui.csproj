@@ -31,9 +31,11 @@
 		<EmbeddedResource Update="Resources\Framework.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Framework.Designer.cs</LastGenOutput>
+			<LogicalName>$(RootNamespace).Resources.Framework.resources</LogicalName>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Resources\Framework.de.resx">
 			<DependentUpon>Framework.resx</DependentUpon>
+			<LogicalName>$(RootNamespace).Resources.Framework.de.resources</LogicalName>
 		</EmbeddedResource>
 	</ItemGroup>
 
