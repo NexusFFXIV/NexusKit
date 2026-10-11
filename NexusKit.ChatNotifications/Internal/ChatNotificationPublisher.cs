@@ -41,18 +41,21 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
         mDigest = digest;
     }
 
-    public void Publish(SeString body)
+    public void Publish(SeString body, ulong contentId = 0, string? eventId = null)
     {
         try
         {
             var (enabled, channel, color) = Resolve();
             if (!enabled || channel == NotificationChannel.None) return;
+            // Reserve the event before dispatch so concurrent producers cannot
+            // print the same event twice while one chat call is in flight.
+            if (!mHistory.Add(Kind.Id, body.TextValue, contentId, eventId)) return;
             var decision = NotificationPolicy.Decide(mOwner.Settings.Policy,
                 TimeOnly.FromDateTime(DateTime.Now));
             if (decision.Delivery == NotificationDelivery.Digest)
             {
-                mDigest.Add(new NotificationDigestItem(Kind.Id, 0, DateTime.UtcNow, body.TextValue));
-                mHistory.Add(Kind.Id, body.TextValue);
+                mDigest.Add(new NotificationDigestItem(Kind.Id, contentId,
+                    DateTime.UtcNow, body.TextValue, eventId));
                 return;
             }
 
@@ -72,7 +75,6 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
             if (hasSender)
                 entry.Name = new SeString(new TextPayload(mContext.PluginName));
             mChat.Print(entry);
-            mHistory.Add(Kind.Id, body.TextValue);
         }
         catch (Exception ex)
         {

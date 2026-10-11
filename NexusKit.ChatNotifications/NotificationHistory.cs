@@ -6,7 +6,9 @@ public sealed record NotificationHistoryEntry(
     string Kind,
     DateTime CreatedAtUtc,
     string Message,
-    bool IsRead = false);
+    bool IsRead = false,
+    ulong ContentId = 0,
+    string? EventId = null);
 
 /// <summary>Bounded notification history. Settings persistence keeps the
 /// diagnostic view useful after a plugin restart without introducing a new
@@ -26,16 +28,28 @@ public sealed class NotificationHistoryStore
         if (mStore is not null) _ = LoadAsync();
     }
 
-    public void Add(string kind, string message, DateTime? nowUtc = null)
+    public bool Add(string kind, string message, DateTime? nowUtc = null)
+        => Add(kind, message, 0, null, nowUtc);
+
+    /// <summary>Adds one notification unless the same event was already
+    /// recorded for the same kind/content within the coalescing window.</summary>
+    public bool Add(string kind, string message, ulong contentId,
+        string? eventId = null, DateTime? nowUtc = null)
     {
         var now = nowUtc ?? DateTime.UtcNow;
         lock (mGate)
         {
-            if (mEntries.Any(x => x.Kind == kind && x.Message == message
-                && now - x.CreatedAtUtc <= CoalesceWindow)) return;
-            mEntries.Add(new NotificationHistoryEntry(kind, now, message));
+            if (mEntries.Any(x => x.Kind == kind && x.ContentId == contentId
+                && (eventId is not null
+                    ? x.EventId == eventId
+                    : x.EventId is null && x.Message == message)
+                && (now - x.CreatedAtUtc).Duration() <= CoalesceWindow))
+                return false;
+            mEntries.Add(new NotificationHistoryEntry(kind, now, message,
+                ContentId: contentId, EventId: eventId));
             if (mEntries.Count > MaxEntries) mEntries.RemoveAt(0);
             PersistLocked();
+            return true;
         }
     }
 

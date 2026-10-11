@@ -93,4 +93,26 @@ public sealed class NotificationPolicyTests
         Assert.Equal("1", flushed[0].Message);
         Assert.Equal("100", flushed[^1].Message);
     }
+
+    [Fact]
+    public void NotificationHistory_DeduplicatesByContentAndEventId()
+    {
+        var history = new NotificationHistoryStore();
+        var now = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
+
+        Assert.True(history.Add("history.name", "old", 42, "history:7", now));
+        Assert.False(history.Add("history.name", "new", 42, "history:7", now.AddSeconds(1)));
+        Assert.True(history.Add("history.name", "old", 43, "history:7", now.AddSeconds(1)));
+        Assert.Equal(2, history.GetLatest().Count);
+    }
+
+    [Fact]
+    public void NotificationHistory_AllowsSameEventAgainAfterWindow()
+    {
+        var history = new NotificationHistoryStore();
+        var now = new DateTime(2026, 10, 11, 12, 0, 0, DateTimeKind.Utc);
+
+        Assert.True(history.Add("refresh.exhausted", "failed", 42, "refresh:Profile", now));
+        Assert.True(history.Add("refresh.exhausted", "failed", 42, "refresh:Profile", now.AddSeconds(11)));
+    }
 }
