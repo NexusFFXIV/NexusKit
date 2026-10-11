@@ -8,6 +8,7 @@ using NexusKit.Core.Utilities;
 using NexusKit.Persistence.Maintenance;
 using NexusKit.Ui.Abstractions;
 using NexusKit.Ui.AutoSettings;
+using NexusKit.Ui.AutoSettings.About;
 using NexusKit.Ui.AutoSettings.Maintenance;
 using NexusKit.Ui.Commands;
 using NexusKit.Ui.Imaging;
@@ -74,6 +75,22 @@ public static class UiServiceCollectionExtensions
         services.AddSingleton<AutoSettingsWindow>();
         services.AddSingleton<SettingsWindow>(sp => sp.GetRequiredService<AutoSettingsWindow>());
         services.AddSingleton<NexusWindow>(sp => sp.GetRequiredService<AutoSettingsWindow>());
+        return services;
+    }
+
+    /// <summary>Registers a reusable plugin About/Changelog section. The
+    /// consuming plugin supplies localized resource keys and release-note
+    /// content; NexusKit owns rendering and the per-version read marker.</summary>
+    public static IServiceCollection AddAboutSettingsSection(
+        this IServiceCollection services, AboutPageOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        services.AddSingleton<IAutoSettingsSection>(sp =>
+            new AboutSettingsSection(
+                sp.GetRequiredService<IPluginContext>(),
+                sp.GetRequiredService<ILocalizer>(),
+                sp.GetRequiredService<IBrowserLauncher>(),
+                options));
         return services;
     }
 

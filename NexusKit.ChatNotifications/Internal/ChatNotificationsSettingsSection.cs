@@ -19,7 +19,7 @@ internal sealed class ChatNotificationsSettingsSection : IAutoSettingsSection
     /// <summary>Default sort order — placed after the existing plugin /
     /// module groups (which sort at 0). Bumps positive so configuration
     /// for notifications appears at the bottom of the sidebar.</summary>
-    public int Order => 100;
+    public int Order => 20;
 
     public string NavTitleKey => "nexuskit.chatnotifications.nav";
 
