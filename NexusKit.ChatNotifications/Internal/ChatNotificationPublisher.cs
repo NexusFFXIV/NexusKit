@@ -18,6 +18,7 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
     private readonly IPluginContext mContext;
     private readonly IChatGui mChat;
     private readonly ILogger mLog;
+    private readonly NotificationHistoryStore mHistory;
 
     public NotificationKindDefinition Kind { get; }
 
@@ -26,13 +27,15 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
         ChatNotificationRegistry owner,
         IPluginContext context,
         IChatGui chat,
-        ILogger log)
+        ILogger log,
+        NotificationHistoryStore history)
     {
         Kind = kind;
         mOwner = owner;
         mContext = context;
         mChat = chat;
         mLog = log;
+        mHistory = history;
     }
 
     public void Publish(SeString body)
@@ -58,6 +61,7 @@ internal sealed class ChatNotificationPublisher : IChatNotificationPublisher
             if (hasSender)
                 entry.Name = new SeString(new TextPayload(mContext.PluginName));
             mChat.Print(entry);
+            mHistory.Add(Kind.Id, body.TextValue);
         }
         catch (Exception ex)
         {

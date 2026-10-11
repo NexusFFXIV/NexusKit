@@ -19,6 +19,7 @@ public static class ChatNotificationsServiceCollectionExtensions
     public static IServiceCollection AddNexusKitChatNotifications(this IServiceCollection services)
     {
         services.AddSingleton<ChatNotificationRegistry>();
+        services.AddSingleton<NotificationHistoryStore>();
         services.AddSingleton<IChatNotificationRegistry>(sp => sp.GetRequiredService<ChatNotificationRegistry>());
         services.AddSingleton<IAutoSettingsSection, ChatNotificationsSettingsSection>();
         services.AddResourceLocalizer<Strings>();

@@ -18,6 +18,7 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
     private readonly ISettingsStore mStore;
     private readonly IChatGui mChat;
     private readonly ILogger<ChatNotificationRegistry> mLog;
+    private readonly NotificationHistoryStore mHistory;
     private readonly List<NotificationKindDefinition> mRegistered = new();
     private readonly Dictionary<string, ChatNotificationPublisher> mPublishers = new();
     private ChatNotificationSettings mSettings = new();
@@ -26,12 +27,14 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
         IPluginContext context,
         ISettingsStore store,
         IChatGui chat,
-        ILogger<ChatNotificationRegistry> log)
+        ILogger<ChatNotificationRegistry> log,
+        NotificationHistoryStore history)
     {
         mContext = context;
         mStore = store;
         mChat = chat;
         mLog = log;
+        mHistory = history;
         _ = LoadAsync();
     }
 
@@ -46,7 +49,7 @@ internal sealed class ChatNotificationRegistry : IChatNotificationRegistry
     public IChatNotificationPublisher RegisterKind(NotificationKindDefinition kind)
     {
         if (mPublishers.TryGetValue(kind.Id, out var existing)) return existing;
-        var publisher = new ChatNotificationPublisher(kind, this, mContext, mChat, mLog);
+        var publisher = new ChatNotificationPublisher(kind, this, mContext, mChat, mLog, mHistory);
         mRegistered.Add(kind);
         mPublishers[kind.Id] = publisher;
         return publisher;
