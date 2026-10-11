@@ -59,3 +59,32 @@ public static class NotificationPolicy
             : value >= start || value < end;
     }
 }
+
+/// <summary>Small bounded digest buffer. Hosts decide how to render the
+/// returned items; this type only guarantees FIFO order and a hard cap.</summary>
+public sealed class NotificationDigestBuffer
+{
+    private const int MaxItems = 100;
+    private readonly Queue<NotificationDigestItem> mItems = new();
+
+    public int Count => mItems.Count;
+
+    public void Add(NotificationDigestItem item)
+    {
+        if (mItems.Count == MaxItems) mItems.Dequeue();
+        mItems.Enqueue(item);
+    }
+
+    public IReadOnlyList<NotificationDigestItem> Flush()
+    {
+        var result = mItems.ToArray();
+        mItems.Clear();
+        return result;
+    }
+}
+
+public sealed record NotificationDigestItem(
+    string Kind,
+    ulong ContentId,
+    DateTime CreatedAtUtc,
+    string Message);
