@@ -71,12 +71,12 @@ public static class NexusIconToolbar
         var avail = inTable
             ? ImGui.GetColumnWidth()
             : ImGui.GetContentRegionAvail().X;
-        // Absolute SameLine positions are relative to the host window and can
-        // escape a table cell's clip rect. In tables, draw from the cell's
-        // current cursor and use the wrapping path below.
-        if (!inTable && totalWidth <= avail)
+        if (totalWidth <= avail)
         {
-            ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
+            if (inTable)
+                ImGui.SetCursorPosX(ImGui.GetCursorPosX() + avail - totalWidth);
+            else
+                ImGui.SameLine(ImGui.GetCursorPosX() + avail - totalWidth);
             for (var i = 0; i < slots.Count; i++)
             {
                 if (i > 0) ImGui.SameLine();
